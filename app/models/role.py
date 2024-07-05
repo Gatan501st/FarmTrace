@@ -1,23 +1,25 @@
 from datetime import datetime
 
 from app import db
+from sqlalchemy import Column, String, Boolean, BigInteger, Integer, Text
+from sqlalchemy.orm import relationship
+from uuid import uuid4
 
+from app.models.base_model import BaseModel
 
-class Role(db.Model):
+class Role(BaseModel, db.Model):
     """
     Model representing a role.
     """
-
-    __tablename__ = "role"
-
-    roleId = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(50), nullable=False)
-    description = db.Column(db.Text)
-    default = db.Column(db.Boolean, default=False)
-    permissions = db.Column(db.BigInteger, default=0)
+    __tablename__ = "roles"
+    title = Column(String(50), nullable=False, unique=True)
+    description = Column(Text)
+    default = Column(Boolean, default=False, index=True)
+    permissions = Column(BigInteger, default=0)
+    isActive = Column(Boolean, default=True)
 
     # Back references
-    users = db.relationship("User", back_populates="role")
+    users = relationship("User", back_populates="role")
 
     def __init__(self, **kwargs):
         super(Role, self).__init__(**kwargs)
@@ -31,16 +33,31 @@ class Role(db.Model):
     def insert_roles():
         """ """
         # Assigning permissions to roles
+        from app.models import Permission
         roles = {
-            "Manufacturer": {},
-            "Wholesaler": {},
-            "Retailer": {},
-            "Farmer": {},
-            "Administrator/Regulatory Authority": {},
+            "Guest": [0],
+            "Manufacturer": [
+                Permission.GENERATE_QR_CODE, Permission.VIEW_MANUFACTURER_PRODUCTS,
+                Permission.VIEW_DISTRIBUTION_DATA, Permission.UPDATE_PRODUCT
+            ],
+            "Wholesaler": [
+                Permission.VIEW_MANUFACTURER_PRODUCTS, Permission.PLACE_ORDER,
+                Permission.VIEW_DISTRIBUTION_DATA, Permission.UPDATE_ORDER_STATUS
+            ],
+            "Retailer": [
+                Permission.VIEW_WHOLESALER_PRODUCTS, Permission.PLACE_ORDER,
+                Permission.VIEW_DISTRIBUTION_DATA, Permission.VERIFY_PRODUCT
+            ],
+            "Farmer": [
+                Permission.PLACE_ORDER, Permission.VIEW_RETAILER_PRODUCTS,
+                Permission.VERIFY_PRODUCT
+            ],
+            "Administrator": [
+                Permission.GENERATE_QR_CODE, Permission.VERIFY_PRODUCT, Permission.VIEW_ALL_PRODUCTS, Permission.VIEW_DISTRIBUTION_DATA
+            ]
         }
 
         default_role = "Guest"
-
         for r in roles:
             role = Role.query.filter_by(title=r).first()
             if role is None:
@@ -50,9 +67,8 @@ class Role(db.Model):
             for perm in roles[r]:
                 role.addPermission(perm)
 
-            role.default = role.title == default_role
+            role.default = (role.title == default_role)
             db.session.add(role)
-
         db.session.commit()
 
     @classmethod

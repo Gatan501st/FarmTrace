@@ -1,109 +1,62 @@
 from datetime import datetime
+from flask import current_app
+from flask_login import UserMixin
+from sqlalchemy.orm import relationship
+from sqlalchemy import Column, String, ForeignKey, Boolean, DateTime
+from werkzeug.security import generate_password_hash, check_password_hash
+import random
 
 from app import db
+from app.models import BaseModel
+from app.models import Role
 
+class User(BaseModel, UserMixin, db.Model):
+    __tablename__ = 'users'
+    firstname = Column(String(64))
+    lastname = Column(String(64))
+    email = Column(String(64), nullable=False)
+    username = Column(String(64), index=True)
+    password_hash = Column(String(128))
+    confirmed = Column(Boolean, default=False)
+    confirmed_on = Column(DateTime)
 
-class User(db.Model):
-    __tablename__ = "users"
+    role_id = Column(String(64), ForeignKey('roles.id'))
+    role = relationship('Role', back_populates='users')
+    
+    def __init__(self, *args, **kwargs) -> None:
+        super(User, self).__init__(**kwargs)
+        self.generate_username()
+        if self.role is None:
+            if self.email.split('@')[1] == current_app.config['ORGANIZATION_DOMAIN']:
+                self.role = Role.query.filter_by(title='Administrator').first()
+            if self.role is None:
+                self.role = Role.query.filter_by(default=True).first()
 
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
-    password_hash = db.Column(db.String(128))
-    avatar = db.Column(db.String(128))
-    role = db.Column(db.String(64), default="member")
-    confirmed = db.Column(db.Boolean, default=False)
-    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
+    def generate_username(self):
+        fullname = f'{self.firstname} {self.lastname}'
+        name_parts = fullname.split()
+        
+        # Choose a random part of the name to construct the username
+        if len(name_parts) > 1:
+            # Randomly select parts of the name
+            random.shuffle(name_parts)
+            generated = ''.join(name_parts[:random.randint(1, len(name_parts))])
+        else:
+            # If only one part, use it as is
+            generated = name_parts[0]
+        generated.lower()
+        generated += f'{random.randint(10, 999)}'
+        if User.get('username', generated) is not None:
+            self.generate_username()
+        self.username = generated
 
-    # Other optional fields like first_name, last_name, bio, etc.
-
-    def __init__(self, username, email, password):
-        self.username = username
-        self.email = email
-        self.set_password(password)
-        self.role = "member"  # Default role
-        self.confirmed = False  # Email confirmation status
-        self.avatar = None  # Default avatar path or URL
-        self.last_seen = datetime.utcnow()
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
-    def is_online(self):
-        # Implement logic to check if the user is currently online
-        pass
-
-    def login(self):
-        # Implement login functionality, update last_seen timestamp, etc.
-        pass
-
-    def logout(self):
-        # Implement logout functionality
-        pass
-
-    def check_permission(self, permission):
-        # Implement logic to check if the user has a specific permission based on role
-        pass
-
-    def update_password(self, new_password):
-        # Implement logic to update user password securely
-        pass
-
-    def send_email_confirmation(self):
-        token = self.generate_confirmation_token()
-        # Send email code here (placeholder function)
-
-    def update_email(self, new_email):
-        self.email = new_email
-        self.confirmed = False
-        db.session.add(self)
-        db.session.commit()
-
-        # Send confirmation email with token
-        self.send_email_confirmation()
-
-    def update_avatar(self, avatar_file):
-        # Implement logic to update user's avatar
-        pass
-
-    def update_profile(self, **kwargs):
-        # Implement logic to update other profile details like first name, last name, bio, etc.
-        pass
-
-    def generate_confirmation_token(self):
-        s = Serializer(
-            current_app.config["SECRET_KEY"], expires_in=3600
-        )  # Token expires in 1 hour (3600 seconds)
-        return s.dumps({"confirm": self.id}).decode("utf-8")
-
-    @staticmethod
-    def verify_confirmation_token(token):
-        s = Serializer(current_app.config["SECRET_KEY"])
-        try:
-            data = s.loads(token)
-        except:
-            return False
-
-        # Retrieve user ID from token payload
-        user_id = data.get("confirm")
-        if user_id is None:
-            return False
-
-        # Fetch user from database based on user_id
-        user = User.query.get(user_id)
-        if user is None:
-            return False
-
-        # Mark user's email as confirmed
-        user.confirmed = True
-        db.session.commit()
-
-        return True
-
-    @staticmethod
-    def send_email(subject, sender, recipients, text_body, html_body):
-        # Placeholder function to send emails; replace with proper implementation
-        print(f"Email sent to {recipients} with subject: {subject}")
+    @property
+    def password(self):
+        raise AttributeError('Cannot access password')
+    
+    @password.setter
+    def password(self, pwd):
+        self.password_hash = generate_password_hash(pwd)
+    
+    def verify_password(self, pwd):
+        return check_password_hash(self.password_hash, pwd)
