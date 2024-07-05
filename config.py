@@ -3,8 +3,9 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 
-class Config:
+class Config:    
     # Flask security configuration options
+    SECURITY_PASSWORD_SALT = "truiokjhgfrytuiolnbvdgwuiknsbgvr"
     SECRET_KEY = (
         os.environ.get("SECRET_KEY") or "gxvbnmnbvgvghjklmgfdsgacfgvbhnm"
     )
@@ -17,6 +18,7 @@ class Config:
 
     # Application configuration options
     ORGANIZATION_NAME = os.environ.get("ORGANIZATION_NAME") or "Farm Trace"
+    ORGANIZATION_DOMAIN = os.environ.get("ORGANIZATION_NAME") or "farmtrace.co.ke"
 
     # File upload configuration options
     USER_PROFILE_UPLOAD_PATH = os.path.join(
@@ -26,17 +28,16 @@ class Config:
     UPLOAD_EXTENSIONS = [".jpg", ".gif", ".jpeg", ".png"]
 
     # Mail connection configuration options
-    MAIL_BACKEND = "smtp"
-    MAIL_SERVER = "smtp.zoho.com"
-    MAIL_PORT = 465
-    MAIL_USE_TLS = False
-    MAIL_USE_SSL = True
+    MAIL_SERVER = "sandbox.smtp.mailtrap.io"
+    MAIL_PORT = 2525
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
     MAIL_TIMEOUT = None
 
     # Mail Credentials Settings
     MAIL_DEFAULT_SENDER = "Jisort Ublow Team <info@farmtrace.co.ke>"
-    MAIL_USERNAME = os.environ.get("MAIL_USERNAME", "info@farmtrace.com")
-    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD", "password")
+    MAIL_USERNAME = os.environ.get("MAIL_USERNAME", "a657725d47162c")
+    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD", "9f6d390da75284")
 
     @staticmethod
     def init_app(app):
@@ -44,6 +45,8 @@ class Config:
 
 
 class DevelopmentConfig(Config):
+    HOST = '127.0.0.1'
+    PORT = 5000
     DEBUG = True
     JWT_COOKIE_SECURE = True
     JWT_CSRF_CHECK_FORM = False
@@ -54,6 +57,8 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
+    HOST = '127.0.0.1'
+    PORT = 5000
     TESTING = True
     DEBUG = True
 
