@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}
+How It Works
+{% endblock title %}
+
+{% block content %}
+<section class="bg-green-50 py-12">
+    <div class="container mx-auto text-center">
+        <h1 class="text-4xl font-bold text-green-600 mb-8">How It Works</h1>
+        <p class="text-lg text-gray-700 mb-12">Learn how {{ app_name }} ensures the authenticity and quality of
+            fertilizers from manufacturer to farmer using blockchain technology.</p>
+
+        <!-- Step 1 -->
+        <div class="flex flex-col md:flex-row items-center mb-12">
+            <div class="md:w-1/2 px-4 mb-8 md:mb-0">
+                <img src="/static/images/fertilizer_manufacturing.png" alt="Manufacturing" class="rounded-lg shadow-lg">
+            </div>
+            <div class="md:w-1/2 px-4">
+                <h2 class="text-3xl font-bold text-green-600 mb-4">Step 1: Manufacturing</h2>
+                <p class="text-lg text-gray-700 mb-4">The manufacturer records the production of a batch of fertilizer
+                    on the blockchain, including details such as the composition, production date, and batch number. A
+                    digital certificate of authenticity is assigned to ensure it meets regulatory standards.</p>
+            </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="flex flex-col md:flex-row items-center mb-12">
+
+            <div class="md:w-1/2 px-4">
+                <h2 class="text-3xl font-bold text-green-600 mb-4">Step 2: Distribution to Wholesaler</h2>
+                <p class="text-lg text-gray-700 mb-4">When the manufacturer ships the batch to a wholesaler, a new
+                    transaction is recorded on the blockchain, linking the batch to the wholesaler. The wholesaler can
+                    verify the batch's authenticity and details through the blockchain.</p>
+            </div>
+            <div class="md:w-1/2 px-4 mb-8 md:mb-0">
+                <img src="/static/images/fertilizer_wholesaler.jpg" alt="Distribution" class="rounded-lg shadow-lg">
+            </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="flex flex-col md:flex-row items-center mb-12">
+            <div class="md:w-1/2 px-4 mb-8 md:mb-0">
+                <img src="/static/images/fertilizer_retailer.jpg" alt="Transfer" class="rounded-lg shadow-lg">
+            </div>
+            <div class="md:w-1/2 px-4">
+                <h2 class="text-3xl font-bold text-green-600 mb-4">Step 3: Transfer to Retailer</h2>
+                <p class="text-lg text-gray-700 mb-4">The wholesaler records the transfer of the batch to a retailer on
+                    the blockchain. The retailer inspects the batch and validates its authenticity using the blockchain,
+                    ensuring that no fake fertilizer is added midway.</p>
+            </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="flex flex-col md:flex-row items-center mb-12">
+
+            <div class="md:w-1/2 px-4">
+                <h2 class="text-3xl font-bold text-green-600 mb-4">Step 4: Sale to Farmer</h2>
+                <p class="text-lg text-gray-700 mb-4">When the retailer sells the fertilizer to a farmer, the final
+                    transaction is recorded on the blockchain. The farmer can verify the entire history of the
+                    fertilizer batch, ensuring its authenticity and quality.</p>
+            </div>
+            <div class="md:w-1/2 px-4 mb-8 md:mb-0">
+                <img src="/static/images/fertilizer_farmer.jpg" alt="Sale to Farmer" class="rounded-lg shadow-lg">
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center mt-12">
+            <a href="{{ url_for('accounts.sign_up') }}"
+                class="bg-green-600 text-white px-6 py-3 rounded-lg font-semibold text-lg hover:bg-green-700">Join {{
+                app_name }} Now</a>
+        </div>
+    </div>
+</section>
+{% endblock content %}
