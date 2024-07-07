@@ -10,11 +10,9 @@ class Batch(BaseModel, db.Model):
     qrcode = Column(String(64))
     manufacture_date = Column(DateTime, nullable=False)
     expiry_date = Column(DateTime, nullable=False)
-    size = Column(Integer)
-    price = Column(Integer)
+    size = Column(Integer) # in kgs
 
     product_id = Column(String(64), ForeignKey('products.id'))
     product = relationship('Product', back_populates='batches')
 
     items = relationship('Item', back_populates='batch')
-    

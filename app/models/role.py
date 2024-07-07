@@ -27,7 +27,7 @@ class Role(BaseModel, db.Model):
             self.permissions = 0
 
     def __repr__(self):
-        return f"Role(roleId = {self.roleId}, title = '{self.title}')"
+        return f"Role(roleId = {self.id}, title = '{self.title}')"
 
     @staticmethod
     def insert_roles():
@@ -168,7 +168,7 @@ class Role(BaseModel, db.Model):
             instance.
         """
         details = {
-            "roleId": self.roleId,
+            "roleId": self.id,
             "title": self.title,
             "description": self.description,
             "permissions": self.permissions,
