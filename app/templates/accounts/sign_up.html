@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Sign Up
+{% endblock title %}
+
+{% block content %}
+<style>
+  .match {
+    color: green;
+  }
+
+  .no-match {
+    color: red;
+  }
+</style>
+<div class="min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+    <h2 class="text-2xl font-bold text-green-600 mb-6 text-center">Create Your Account</h2>
+    <form action="{{ url_for('accounts.sign_up') }}" method="POST">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700" for="firstname">First Name</label>
+          <input
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+            type="text" id="firstname" name="firstname" required>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700" for="lastname">Last Name</label>
+          <input
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+            type="text" id="lastname" name="lastname" required>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700" for="company">Company Name</label>
+        <input
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+          type="text" id="company" name="company">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700" for="email">Email</label>
+        <input
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+          type="email" id="email" name="email" required>
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700" for="role">What best describes you</label>
+        <select class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+        name="role" id="role">
+          <option value="Farmer">Farmer</option>
+          <option value="Manufacturer">Manufacturer</option>
+          <option value="Wholesaler">Wholesaler</option>
+          <option value="Retailer">Retailer</option>
+        </select>
+      </div>
+      <div class="mb-4 relative">
+        <label class="block text-sm font-medium text-gray-700" for="password">Password</label>
+        <input
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+          type="password" id="password" name="password" required>
+        <img class="w-5 h-5 absolute top-1/2 right-5 cursor-pointer" src="../../static/icons/show-password.svg"
+          id="view-password" alt="">
+      </div>
+      <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700" for="confirm_password">Confirm Password</label>
+        <input
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+          type="password" id="confirmPassword" name="confirm_password" required>
+        <span id="message"></span>
+      </div>
+      <div class="flex items-center justify-between">
+        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">Sign Up</button>
+        <a href="{{ url_for('accounts.sign_in') }}" class="text-green-600 hover:underline">Already have an account?</a>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const message = document.getElementById('message');
+    const form = document.querySelector('form');
+    const viewPassword = document.querySelector('#view-password')
+    const email =document.querySelector('#email')
+    const role = document.querySelector('#role')
+    const company = document.querySelector('#company')
+    
+    role.addEventListener('input', () => {
+      if (role.value == 'Manufacturer') {
+        company.required = true
+      } else {
+        company.required = false
+      }
+    })
+
+    email.addEventListener('input', () => {
+      if (email.value.split('@')[1] == 'farmtrace.co.ke') {
+        role.disabled = true
+      } else {
+        role.disabled = false
+      }
+    })
+
+    viewPassword.addEventListener('click', () => {
+      if (password.type === 'password') {
+        password.type = 'text';
+        confirmPassword.type = 'text';
+        viewPassword.src = '../../static/icons/hide-password.svg';
+      } else {
+        password.type = 'password';
+        confirmPassword.type = 'password';
+        viewPassword.src = '../../static/icons/show-password.svg';
+      }
+    })
+
+    function checkPasswordMatch() {
+      if (password.value === confirmPassword.value) {
+        message.textContent = 'Passwords match';
+        message.className = 'match';
+      } else {
+        message.textContent = 'Passwords do not match';
+        message.className = 'no-match';
+      }
+    }
+
+    confirmPassword.addEventListener('input', checkPasswordMatch);
+
+    form.addEventListener('submit', (event) => {
+      if (password.value !== confirmPassword.value) {
+        event.preventDefault();
+        alert('Passwords do not match. Please correct and try again.');
+      }
+    });
+  });
+</script>
+{% endblock content %}

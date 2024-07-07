@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock title %}
+
+{% block content %}
+
+<div class="container mx-auto mt-10">
+	<div class="flex justify-center">
+		<div class="w-full lg:w-2/3 bg-white shadow-md rounded-lg p-6">
+			<h2 class="text-2xl font-semibold mb-4">Profile</h2>
+
+			<!-- Profile Picture -->
+			<div class="flex items-center mb-6">
+				<img class="w-24 h-24 rounded-full mr-4" src="https://via.placeholder.com/150" alt="Profile Picture">
+				<div>
+					<label class="block text-gray-700 text-sm font-bold mb-2" for="profile_picture">
+						Profile Picture
+					</label>
+					<input
+						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+						id="profile_picture" type="file">
+				</div>
+			</div>
+
+			<!-- Basic Information -->
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="username">
+					Username
+				</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="username" type="text" value="{{ current_user.username }}" disabled>
+			</div>
+
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+					Email
+				</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="email" type="email" value="{{ current_user.email }}" disabled>
+			</div>
+
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="role">
+					Role
+				</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="role" type="text" value="{{ current_user.role_title }}" disabled>
+			</div>
+
+			<!-- Address Information -->
+			<h3 class="text-xl font-semibold mb-4 mt-6">Address Information</h3>
+
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="address">
+					Address
+				</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="address" type="text" value="{{ current_user.address }}">
+			</div>
+
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="city">
+					City
+				</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="city" type="text" value="{{ current_user.city }}">
+			</div>
+
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="state">
+					State
+				</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="state" type="text" value="{{ current_user.state }}">
+			</div>
+
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="zipcode">
+					Zip Code
+				</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="zipcode" type="text" value="{{ current_user.zipcode }}">
+			</div>
+
+			<!-- Notification Preferences -->
+			<h3 class="text-xl font-semibold mb-4 mt-6">Notification Preferences</h3>
+
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="email_notifications">
+					Email Notifications
+				</label>
+				<input type="checkbox" id="email_notifications" {{ 'checked' if current_user.email_notifications else '' }}>
+				<label for="email_notifications" class="text-gray-700 text-sm">Receive email notifications</label>
+			</div>
+
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="sms_notifications">
+					SMS Notifications
+				</label>
+				<input type="checkbox" id="sms_notifications" {{ 'checked' if current_user.sms_notifications else '' }}>
+				<label for="sms_notifications" class="text-gray-700 text-sm">Receive SMS notifications</label>
+			</div>
+
+			<!-- Security Settings -->
+			<h3 class="text-xl font-semibold mb-4 mt-6">Security Settings</h3>
+
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="password">
+					Password
+				</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="password" type="password">
+			</div>
+
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="two_factor">
+					Two-Factor Authentication
+				</label>
+				<input type="checkbox" id="two_factor" {{ 'checked' if current_user.two_factor else '' }}>
+				<label for="two_factor" class="text-gray-700 text-sm">Enable two-factor authentication</label>
+			</div>
+
+			
+		</div>
+	</div>
+</div>
+{% endblock content %}

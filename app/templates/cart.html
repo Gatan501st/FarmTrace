@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6">Shopping Cart</h1>
+        <div class="bg-white rounded-lg shadow-md p-6">
+            {% if cart %}
+                <table class="w-full text-left">
+                    <thead>
+                        <tr>
+                            <th class="pb-4">Product</th>
+                            <th class="pb-4">Quantity</th>
+                            <th class="pb-4">Price</th>
+                            <th class="pb-4">Total</th>
+                            <th class="pb-4"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in cart %}
+                            <tr class="border-t">
+                                <td class="py-4">{{ item.product.name }}</td>
+                                <td class="py-4">
+                                    <form action="{{ url_for('main.update_cart', product_id=item.product.id) }}" method="post" class="inline">
+                                        <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="w-16 border rounded px-2 py-1">
+                                        <button type="submit" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700">Update</button>
+                                    </form>
+                                </td>
+                                <td class="py-4">${{ item.product.price }}</td>
+                                <td class="py-4">${{ item.product.price * item.quantity }}</td>
+                                <td class="py-4">
+                                    <form action="{{ url_for('main.remove_from_cart', product_id=item.product.id) }}" method="post" class="inline">
+                                        <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="text-right mt-6">
+                    <p class="text-xl font-bold">Total: ${{ total }}</p>
+                    <button class="bg-green-500 text-white px-4 py-2 rounded mt-4 hover:bg-green-700">Proceed to Checkout</button>
+                </div>
+            {% else %}
+                <p class="text-gray-700">Your cart is empty.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

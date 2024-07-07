@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Product{% endblock title %}
+{% block content %}
+<div class="md:max-w-4xl w-full mx-auto py-8">
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-3xl font-semibold mb-4">{{ product.name }}</h2>
+        <p class="text-gray-700 mb-6">{{ product.description }}</p>
+        <div>
+			<div class="w-full mb-8">
+				<div class="mt-4 float-right">
+					<button id="showAddBatchModal" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add
+						Batch</button>
+				</div>
+				<h3 class="text-2xl font-semibold mb-2">Available Batches:</h3>
+			</div>
+            <ul class="flex flex-wrap justify-between divide-y divide-gray-200">
+                {% for batch in product.batches %}
+                <li class="p-4 m-2 flex bg-gray-200 rounded-md">
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="text-lg font-semibold text-gray-900">Batch Number: {{ batch.batch_number }}</p>
+                                <p class="text-sm text-gray-500">Manufacture Date: {{ batch.manufacture_date.strftime('%Y-%m-%d') }}</p>
+                                <p class="text-sm text-gray-500">Expiry Date: {{ batch.expiry_date.strftime('%Y-%m-%d') }}</p>
+                                <p class="text-sm text-gray-500">Size: {{ batch.size }} unit/s</p>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+		{% include 'products/add_batch.html' %}
+    </div>
+</div>
+{% endblock content %}

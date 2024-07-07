@@ -1,0 +1,95 @@
+<!-- Add Product Modal -->
+<div id="addProductModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full">
+        <h2 class="text-2xl font-bold mb-4">Add Product</h2>
+        <form method="post" action="{{ url_for('products.add_product') }}">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="productName">Product Name</label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="productName" name="name" type="text" placeholder="Product Name">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="productDescription">Description</label>
+                <textarea class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="productDescription" name="description" placeholder="Product Description"></textarea>
+            </div>
+            <!-- Batch Sizes Input -->
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="batchSize">Batch Size</label>
+				<ul id="batchSizesList" style="display: flex; flex-wrap: wrap;" class="bg-gray-200 mt-2 list-none list-inside text-gray-700"></ul>
+                <div class="flex">
+                    <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="batchSize" type="number" placeholder="Enter batch size">
+                    <button id="addBatchSizeButton" type="button" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2">Add</button>
+                </div>
+                <!-- Hidden input to collect batch sizes -->
+                <input type="hidden" id="batchSizesInput" name="batch_sizes">
+            </div>
+            <div class="flex items-center justify-between">
+                <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit">Add Product</button>
+                <button id="closeModalButton" type="button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('addProductButton').addEventListener('click', function () {
+        document.getElementById('addProductModal').classList.remove('hidden');
+    });
+
+    document.getElementById('closeModalButton').addEventListener('click', function () {
+        document.getElementById('addProductModal').classList.add('hidden');
+    });
+
+    document.getElementById('addBatchSizeButton').addEventListener('click', function () {
+        var batchSizeInput = document.getElementById('batchSize');
+        var batchSize = batchSizeInput.value;
+        if (batchSize) {
+            var batchSizesList = document.getElementById('batchSizesList');
+
+            // Create list item
+            var listItem = document.createElement('li');
+            listItem.classList.add('flex', 'items-center', 'p-2', 'm-2', 'bg-gray-400');
+
+            // Create span for batch size text
+            var batchSizeText = document.createElement('span');
+            batchSizeText.textContent = batchSize;
+            listItem.appendChild(batchSizeText);
+
+            // Create 'X' button
+            var removeButton = document.createElement('button');
+            removeButton.textContent = 'X';
+            removeButton.classList.add('ml-4', 'bg-red-500', 'hover:bg-red-700', 'text-white', 'font-bold', 'py-1', 'px-2', 'rounded');
+            removeButton.addEventListener('click', function () {
+                // Remove the list item
+                batchSizesList.removeChild(listItem);
+
+                // Update the hidden input with batch sizes
+                var batchSizesInput = document.getElementById('batchSizesInput');
+                var batchSizes = batchSizesInput.value ? batchSizesInput.value.split(',') : [];
+                var index = batchSizes.indexOf(batchSize);
+                if (index !== -1) {
+                    batchSizes.splice(index, 1);
+                }
+                batchSizesInput.value = batchSizes.join(',');
+            });
+            listItem.appendChild(removeButton);
+
+            // Append list item to the batch sizes list
+            batchSizesList.appendChild(listItem);
+
+            // Update the hidden input with batch sizes
+            var batchSizesInput = document.getElementById('batchSizesInput');
+            var batchSizes = batchSizesInput.value ? batchSizesInput.value.split(',') : [];
+            batchSizes.push(batchSize);
+            batchSizesInput.value = batchSizes.join(',');
+
+            // Clear the input field
+            batchSizeInput.value = '';
+        }
+    });
+
+    document.querySelector('form').addEventListener('submit', function (event) {
+        var batchSizesInput = document.getElementById('batchSizesInput');
+        var batchSizes = batchSizesInput.value.split(',').map(Number);
+        batchSizesInput.value = JSON.stringify(batchSizes);
+    });
+</script>

@@ -1,0 +1,71 @@
+<!-- Add Batch Popup Form -->
+<div id="addBatchModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+	<div class="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full">
+		<h2 class="text-2xl font-bold mb-4">Add Batch</h2>
+		<form id="addBatchForm" method="post" action="{{ url_for('products.add_batch', product_id=product.id) }}">
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="batchNumber">Batch Number</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="batchNumber" name="batch_number" type="text" placeholder="Batch Number">
+			</div>
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="manufactureDate">Manufacture Date</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="manufactureDate" name="manufacture_date" type="date">
+			</div>
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="expiryDate">Expiry Date</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="expiryDate" name="expiry_date" type="date">
+			</div>
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="batchSize">Batch Size (units)</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="batchSize" name="size" type="number" step="any" placeholder="Batch Size">
+			</div>
+			<div class="flex items-center justify-between">
+				<button id="addBatchSubmit"
+					class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit">Add
+					Batch</button>
+				<button id="closeBatchModal" type="button"
+					class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Cancel</button>
+			</div>
+		</form>
+	</div>
+</div>
+<script>
+	document.getElementById('showAddBatchModal').addEventListener('click', function () {
+		document.getElementById('addBatchModal').classList.remove('hidden');
+	});
+
+	document.getElementById('closeBatchModal').addEventListener('click', function () {
+		document.getElementById('addBatchModal').classList.add('hidden');
+	});
+
+	document.getElementById('addBatchSubmit').addEventListener('click', function () {
+		// Retrieve form data
+		var batchNumber = document.getElementById('batchNumber').value;
+		var manufactureDate = document.getElementById('manufactureDate').value;
+		var expiryDate = document.getElementById('expiryDate').value;
+		var batchSize = document.getElementById('batchSize').value;
+
+		// Create list item for display
+		var batchList = document.getElementById('batchList');
+		var listItem = document.createElement('li');
+		listItem.textContent = `Batch Number: ${batchNumber}, Manufacture Date: ${manufactureDate}, Expiry Date: ${expiryDate}, Size: ${batchSize} units`;
+		batchList.appendChild(listItem);
+
+		// Hide modal
+		document.getElementById('addBatchModal').classList.add('hidden');
+
+		// Clear form inputs
+		document.getElementById('batchNumber').value = '';
+		document.getElementById('manufactureDate').value = '';
+		document.getElementById('expiryDate').value = '';
+		document.getElementById('batchSize').value = '';
+	});
+</script>
