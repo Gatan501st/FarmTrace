@@ -1,4 +1,4 @@
-import json, csv
+import json, csv, os
 from flask import render_template, request, redirect, flash, make_response, url_for, abort
 from flask_login import login_required, current_user
 from datetime import datetime
@@ -7,6 +7,9 @@ from flask import current_app
 from app.decorators import role_required
 
 from . import products
+from werkzeug.utils import secure_filename
+from sqlalchemy.exc import IntegrityError
+
 
 @products.route('/', methods=['POST'])
 def add_product():
@@ -16,10 +19,10 @@ def add_product():
         batch = float(batch)
     batches = json.dumps(batches)
     product = Product(
-        name = request.form.get('name'),
-        description = request.form.get('description'),
-        batch_sizes = batches,
-        manufacturer = current_user,
+        name=request.form.get('name'),
+        description=request.form.get('description'),
+        batch_sizes=batches,
+        manufacturer=current_user,
     )
     product.save()
     if not Product.get('id', product.id):
@@ -47,14 +50,14 @@ def add_batch(product_id):
         flash("Error fetching product")
         return make_response(), 409
     batch = Batch(
-        batch_number = request.form.get('batch_number'),
+        batch_number=request.form.get('batch_number'),
         # qrcode = request.form.get('batch_number'),
-        manufacture_date = datetime.strptime(request.form.get('manufacture_date'), '%Y-%m-%d'),
-        expiry_date = datetime.strptime(request.form.get('expiry_date'), '%Y-%m-%d'),
-        size = request.form.get('size'),
+        manufacture_date=datetime.strptime(request.form.get('manufacture_date'), '%Y-%m-%d'),
+        expiry_date=datetime.strptime(request.form.get('expiry_date'), '%Y-%m-%d'),
+        size=request.form.get('size'),
         
-        product_id = product.id,
-        product = product
+        product_id=product.id,
+        product=product
     )
     batch.save()
     if not Batch.get('id', batch.id):
@@ -63,26 +66,38 @@ def add_batch(product_id):
     flash('Batch created successfully', 'success')
     return redirect(url_for('products.view_product', product_id=product.id))
 
-@products.route('/<product_id>/batch/upload')
+
+@products.route('/<product_id>/batch/upload', methods=['POST'])
 def batch_upload(product_id):
     product = Product.get('id', product_id)
     if product is None:
         return make_response({'message': 'Product not found'}), 404
     batches = request.files.get('batch_csv')
     if not batches or not batches.filename.split('.')[1] == 'csv':
+        return make_response({'message': 'Invalid file format'}), 400
+    TEMP_FOLDER = 'app/static/temp'
+    if not os.path.exists(TEMP_FOLDER):
+        os.makedirs(TEMP_FOLDER)
+    file_path = f'{TEMP_FOLDER}/{secure_filename(batches.filename)}'
+    batches.save(file_path)
+    if not batches or not batches.filename.split('.')[1] == 'csv':
         abort(400)
-    with open(batches, 'r', newline="") as f:
+    with open(file_path, 'r', newline="") as f:
         values = csv.reader(f)
         for value in values:
-            if len(value) < 3:
-                batch = Batch(
-                    batch_number = value[0],
-                    manufacture_date = datetime.strptime(value[1], '%Y-%m-%d'),
-                    expiry_date = datetime.strptime(value[2], '%Y-%m-%d'),
-                    size = value[3],
-                    
-                    product_id = product_id,
-                    product = product.id
-                )
-                batch.save()
-            
+            if not len(value) < 3:
+                try:
+                    batch = Batch(
+                        batch_number=value[0],
+                        manufacture_date=datetime.strptime(value[1], '%Y-%m-%d'),
+                        expiry_date=datetime.strptime(value[2], '%Y-%m-%d'),
+                        size=value[3],
+                        
+                        product_id=product_id,
+                        product=product
+                    )
+                    batch.save()
+                except IntegrityError:
+                    return make_response({'message': 'Failed: Similar batch numbers detected'}), 409
+    os.remove(file_path)
+    return make_response({'message': 'Batches uploaded successfully'}), 201

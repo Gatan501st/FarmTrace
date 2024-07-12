@@ -3,12 +3,18 @@
 	<div class="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full">
 		<h2 class="text-2xl font-bold mb-4">Add Batch</h2>
 		<h1>Upload a CSV file</h1>
-		<form action="{{url_for( 'products.batch_upload', product_id=product.id)}}" method="post">
-			<div class="h-[300px] w-full">
+		<form id="batchUploadForm" action="{{url_for( 'products.batch_upload', product_id=product.id)}}" method="post">
+			<div class="h-[300px] w-full m-2 p-2">
 				<input type="file" name="batch_csv" id="batch_file" accept="csv">
 			</div>
+			<div>
+				<button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit">Upload
+					Batches</button>
+			</div>
 		</form>
-		<h1>or add manually</h1>
+		<details class="mt-2">
+
+		<summary class="font-semibold font-lg cursor-pointer">or Add Manually</summary>
 		<form id="addBatchForm" method="post" action="{{ url_for('products.add_batch', product_id=product.id) }}">
 			<div class="mb-4">
 				<label class="block text-gray-700 text-sm font-bold mb-2" for="batchNumber">Batch Number</label>
@@ -42,7 +48,8 @@
 					class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Cancel</button>
 			</div>
 		</form>
-	</div>
+	</details>
+</div>
 </div>
 <script>
 	document.getElementById('showAddBatchModal').addEventListener('click', function () {
@@ -52,7 +59,29 @@
 	document.getElementById('closeBatchModal').addEventListener('click', function () {
 		document.getElementById('addBatchModal').classList.add('hidden');
 	});
-
+	document.querySelector('#batchUploadForm').addEventListener('submit', async (event) => {
+		event.preventDefault()
+		const file = document.querySelector('#batch_file').files[0]
+		if (!file) {
+			alert('Please select a file to upload')
+			return
+		}
+		const formData = new FormData()
+		formData.append('batch_csv', file)
+		try {
+			const response = await fetch("{{url_for('products.batch_upload', product_id=product.id)}}", {
+				method: 'POST',
+				body: formData
+			})
+			if (!response.ok) {
+				const error = await response.json()
+				throw new Error(error.message)
+			}
+			alert('Batches uploaded successfully')
+		} catch (error) {
+			alert(error.message)
+		}
+	})
 	document.getElementById('addBatchSubmit').addEventListener('click', function () {
 		// Retrieve form data
 		var batchNumber = document.getElementById('batchNumber').value;
