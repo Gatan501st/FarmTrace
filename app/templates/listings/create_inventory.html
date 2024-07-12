@@ -1,0 +1,49 @@
+<!-- Add Batch Popup Form -->
+<div id="createInventory" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+	<div class="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full">
+		<h2 class="text-2xl font-bold text-center">Create Inventory</h2>
+		<h3 class="text-sm m-2 text-center">An inventory allows you to manage and keep track of your stock</h3>
+		<form id="addBatchForm" method="post" action="{{ url_for('listings.create_inventory') }}">
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="name">Name</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="name" name="name" type="text" placeholder="Name of Your Inventory">
+			</div>
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="description">Description</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="description" name="description" type="text" >
+			</div>
+			<div class="flex items-center justify-between">
+				<button id="createInventorySubmit"
+					class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit">Create</button>
+				<button id="closeInventoryModal" type="button"
+					class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Cancel</button>
+			</div>
+		</form>
+	</div>
+</div>
+<script>
+	document.getElementById('showInventoryModal').addEventListener('click', function () {
+		document.getElementById('createInventory').classList.remove('hidden');
+	});
+
+	document.getElementById('closeInventoryModal').addEventListener('click', function () {
+		document.getElementById('createInventory').classList.add('hidden');
+	});
+
+	document.getElementById('createInventorySubmit').addEventListener('click', function () {
+		// Retrieve form data
+		var name = document.getElementById('name').value;
+		var description = document.getElementById('description').value;
+
+		// Hide modal
+		document.getElementById('addBatchModal').classList.add('hidden');
+
+		// Clear form inputs
+		document.getElementById('name').value = '';
+		document.getElementById('description').value = '';
+	});
+</script>

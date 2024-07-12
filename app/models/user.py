@@ -21,6 +21,8 @@ class User(BaseModel, UserMixin, db.Model):
 
     role_title = Column(String(64), ForeignKey('roles.title'))
     role = relationship('Role', back_populates='users')
+    
+    inventories = relationship('Inventory', back_populates='user')
 
     __mapper_args__ = {
         'polymorphic_identity': 'User',

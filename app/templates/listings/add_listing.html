@@ -1,0 +1,129 @@
+<div class="text-center mt-8">
+    <button id="openModalButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        Create Listing
+    </button>
+</div>
+
+<!-- The Modal -->
+<div id="createListingModal" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 relative">
+        <!-- Modal Close Button -->
+        <button id="closeModalButton" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+            &times;
+        </button>
+
+        <!-- Modal Content -->
+        <h2 class="text-2xl font-bold mb-4">Create Listing</h2>
+        <form id="createListingForm" action="/listings/add" method="POST">
+            <div class="mb-4">
+                <label for="productName" class="block text-gray-700 font-bold mb-2">Product Name</label>
+                <input type="text" id="productName" name="name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="mb-4">
+                <label for="description" class="block text-gray-700 font-bold mb-2">Description</label>
+                <textarea id="description" name="description" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" rows="4" required></textarea>
+            </div>
+            <div class="mb-4">
+                <label for="price" class="block text-gray-700 font-bold mb-2">Price</label>
+                <input type="number" id="price" name="price" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="mb-4">
+                <label for="availableStock" class="block text-gray-700 font-bold mb-2">Available Stock</label>
+                <input type="number" id="availableStock" name="quantity" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="mb-4">
+                <label for="minOrder" class="block text-gray-700 font-bold mb-2">Minimum Order Quantity</label>
+                <input type="number" id="minOrder" name="min_order" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="mb-4">
+                <label for="inventoryId" class="block text-gray-700 font-bold mb-2">Inventory</label>
+                <select id="inventoryId" name="inventory_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            <div class="mb-4">
+                <label for="productId" class="block text-gray-700 font-bold mb-2">Product</label>
+                <select id="productId" name="product_id" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    Submit
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const openModalButton = document.getElementById('openModalButton');
+        const closeModalButton = document.getElementById('closeModalButton');
+        const createListingModal = document.getElementById('createListingModal');
+
+        openModalButton.addEventListener('click', function () {
+            createListingModal.classList.remove('hidden');
+        });
+
+        closeModalButton.addEventListener('click', function () {
+            createListingModal.classList.add('hidden');
+        });
+
+        window.addEventListener('click', function (event) {
+            if (event.target === createListingModal) {
+                createListingModal.classList.add('hidden');
+            }
+        });
+
+        const createListingForm = document.getElementById('createListingForm');
+        createListingForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData(createListingForm);
+
+            fetch('/listings/add', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+                if (response.ok) {
+                    createListingModal.classList.add('hidden');
+                    alert('Listing created successfully!');
+                } else {
+                    alert('Error creating listing');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error creating listing');
+            });
+        });
+
+        // Fetch and populate inventory and product options
+        fetch('/api/inventories')
+            .then(response => response.json())
+            .then(data => {
+                const inventorySelect = document.getElementById('inventoryId');
+                data.forEach(inventory => {
+                    const option = document.createElement('option');
+                    option.value = inventory.id;
+                    option.textContent = inventory.name;
+                    inventorySelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching inventories:', error));
+
+        fetch('/api/products')
+            .then(response => response.json())
+            .then(data => {
+                const productSelect = document.getElementById('productId');
+                data.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.id;
+                    option.textContent = product.name;
+                    productSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error fetching products:', error));
+    });
+</script>

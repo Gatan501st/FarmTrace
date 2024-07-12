@@ -14,6 +14,8 @@ class Product(BaseModel, db.Model):
     batches = relationship('Batch', back_populates='product')
     manufacturer_id = Column(String(64), ForeignKey('manufacturers.id'))
     manufacturer = relationship('Manufacturer', back_populates='products')
+    
+    listings = relationship('Listing', back_populates='product')
 
     def generate_qrcode(self):
         """

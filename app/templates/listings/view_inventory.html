@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Inventory{% endblock title %}
+{% block content %}
+<div class="md:max-w-4xl w-full mx-auto py-8">
+    <div class="bg-white shadow-md rounded-lg p-6">
+        <h2 class="text-3xl font-semibold mb-4">{{ inventory.name }}</h2>
+        <p class="text-gray-700 mb-6">{{ inventory.description }}</p>
+        <div>
+			<div class="w-full mb-8">
+				<div class="mt-4 float-right">
+					<button id="showAddBatchModal" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add
+						Listing</button>
+				</div>
+				<h3 class="text-2xl font-semibold mb-2">Available Products:</h3>
+			</div>
+            <ul class="flex flex-wrap justify-between divide-y divide-gray-200">
+                {% for listing in inventory.batches %}
+                <li class="p-4 m-2 flex bg-gray-200 rounded-md">
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <!-- TODO -->
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+		{% include 'listings/add_listing.html' %}
+    </div>
+</div>
+{% endblock content %}

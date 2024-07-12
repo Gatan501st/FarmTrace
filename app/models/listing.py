@@ -6,9 +6,14 @@ from app.models import BaseModel
 
 class Listing(BaseModel, db.Model):
     __tablename__ = 'listings'
+    product_name = Column(String(64))
+    description = Column(String(128))
     price = Column(Integer)
     min_order = Column(Integer)
     available_stock = Column(Integer)
 
-    user = relationship('User', back_populates='listings')
-    user_id = Column(String(64), ForeignKey('users.id'))
+    inventory_id = Column(String(64), ForeignKey('inventories.id'))
+    inventory = relationship('Inventory', back_populates='listings')
+    
+    product_id = Column(String(64), ForeignKey('products.id'))
+    product = relationship('Product', back_populates='listings')

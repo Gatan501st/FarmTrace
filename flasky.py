@@ -35,7 +35,7 @@ if __name__ == '__main__':
         port = app.config['PORT']
     app.run(
         host=host,
-        port=port,
+        port=5500,
         debug=True,
         use_reloader=True
     )

@@ -11,3 +11,5 @@ from .permission import Permission as Permission
 from .product import Product as Product
 from .batch import Batch as Batch
 from .item import Item as Item
+from .listing import Listing as Listing
+from .inventory import Inventory as Inventory
