@@ -7,6 +7,7 @@ from app.models import BaseModel
 class Listing(BaseModel, db.Model):
     __tablename__ = 'listings'
     product_name = Column(String(64))
+    avatar_path = Column(String(128))
     description = Column(String(128))
     price = Column(Integer)
     min_order = Column(Integer)

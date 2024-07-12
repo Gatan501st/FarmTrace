@@ -15,21 +15,23 @@
         <!-- Modal Content -->
         <h2 class="text-2xl font-bold mb-4">Create Listing</h2>
         <form id="createListingForm" action="/listings/add" method="POST">
-            <div class="mb-4">
-                <label for="inventoryId" class="block text-gray-700 font-bold mb-2">Inventory</label>
-                <select id="inventoryId" name="inventory_id"
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    required>
-                    <!-- Options will be populated dynamically -->
-                </select>
-            </div>
-            <div class="mb-4">
-                <label for="productId" class="block text-gray-700 font-bold mb-2">Product</label>
-                <select id="productId" name="product_id"
-                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    required>
-                    <!-- Options will be populated dynamically -->
-                </select>
+            <div class="flex gap-4">
+                <div class="mb-4 w-1/2">
+                    <label for="inventoryId" class="block text-gray-700 font-bold mb-2">Inventory</label>
+                    <select id="inventoryId" name="inventory_id"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        required>
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
+                <div class="mb-4 w-1/2">
+                    <label for="productId" class="block text-gray-700 font-bold mb-2">Product</label>
+                    <select id="productId" name="product_id"
+                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        required>
+                        <!-- Options will be populated dynamically -->
+                    </select>
+                </div>
             </div>
             <div class="mb-4">
                 <label for="description" class="block text-gray-700 font-bold mb-2">Description</label>
@@ -37,9 +39,15 @@
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     rows="4" required></textarea>
             </div>
+            <div class="mb-4">
+                <label for="avatar" class="block text-gray-700 font-bold mb-2">Product Avatar</label>
+                <input id="avatar" name="avatar" type="file"
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    rows="4" required>
+            </div>
             <div class="flex gap-4">
                 <div class="mb-4">
-                    <label for="price" class="block text-gray-700 font-bold mb-2">Price per Unit</label>
+                    <label for="price" class="block text-gray-700 font-bold mb-2">Price per Unit (KSH)</label>
                     <input type="number" id="price" name="price"
                         class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         required>
@@ -71,6 +79,9 @@
         const openModalButton = document.getElementById('openModalButton');
         const closeModalButton = document.getElementById('closeModalButton');
         const createListingModal = document.getElementById('createListingModal');
+        const createListingForm = document.getElementById('createListingForm');
+        const avatarInput = document.getElementById('avatar');
+        let avatarPath = '';
 
         openModalButton.addEventListener('click', function () {
             createListingModal.classList.remove('hidden');
@@ -86,10 +97,33 @@
             }
         });
 
-        const createListingForm = document.getElementById('createListingForm');
+        avatarInput.addEventListener('change', function () {
+            const file = avatarInput.files[0];
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            fetch('/listings/upload/avatar', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        avatarPath = data.file_path;
+                    } else {
+                        alert('Error uploading file');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error uploading file');
+                });
+        });
+
         createListingForm.addEventListener('submit', function (event) {
             event.preventDefault();
             const formData = new FormData(createListingForm);
+            formData.set('avatar', avatarPath);
 
             fetch('/listings/add', {
                 method: 'POST',

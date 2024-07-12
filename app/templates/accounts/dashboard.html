@@ -37,14 +37,13 @@
 					<th class="py-2">Actions</th>
 				</tr>
 			</thead>
-			<tbody class="">
+			<tbody>
 				{% for product in user.products %}
 				<tr>
 					<td class="p-2">{{ product.name }}</td>
 					<td class="p-2 text-left">{{ product.description }}</td>
 					<td class="p-2">
-						<a href="{{url_for('products.view_product', product_id=product.id)}}"
-							class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+						<a href="{{url_for('products.view_product', product_id=product.id)}}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
 							DETAILS
 						</a>
 					</td>
@@ -86,8 +85,8 @@
 </div>
 
 <!-- Order History -->
+{% if user.role_title != 'Manufacturer' %}
 <h3 class="text-xl font-semibold mb-4 mt-6">Order History</h3>
-
 <div class="overflow-x-auto">
 	<table class="min-w-full bg-white">
 		<thead>
@@ -110,7 +109,36 @@
 		</tbody>
 	</table>
 </div>
+{% endif %}
+
+<!-- Orders Received -->
+{% if user.role_title != 'Farmer' %}
+<h3 class="text-xl font-semibold mb-4 mt-6">Orders Received</h3>
+<div class="overflow-x-auto">
+	<table class="min-w-full bg-white">
+		<thead>
+			<tr>
+				<th class="py-2">Order ID</th>
+				<th class="py-2">Date</th>
+				<th class="py-2">Total</th>
+				<th class="py-2">Status</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for order in user.received_orders %}
+			<tr>
+				<td class="py-2">{{ order.id }}</td>
+				<td class="py-2">{{ order.date }}</td>
+				<td class="py-2">{{ order.total }}</td>
+				<td class="py-2">{{ order.status }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 </div>
+{% endif %}
+
+<!-- Reports and Analytics -->
 {% if current_user.role_title != 'Farmer' %}
 <div id="reports-section" class="">
 	<h2 class="text-3xl font-bold mb-4">Reports</h2>
