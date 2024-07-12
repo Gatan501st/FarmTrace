@@ -1,10 +1,11 @@
-from flask import render_template, make_response, request, flash, redirect, url_for
-from flask_login import current_user
+from flask import render_template, make_response, request, flash, redirect, url_for, jsonify
+from flask_login import current_user, login_required
 
 from app.models import Listing, Inventory, Product
 from . import listings
 
 @listings.route('/')
+@login_required
 def view_listings():
     products = [
         {
@@ -46,6 +47,7 @@ def view_listings():
     return render_template('listings/view_listings.html', products=products, user=current_user)
 
 @listings.route('/inventory', methods=['POST'])
+@login_required
 def create_inventory():
     inventory = Inventory(
         name = request.form.get('name'),
@@ -62,11 +64,13 @@ def create_inventory():
     return redirect(url_for('listings.view_inventory', inventory_id=inventory.id)), 201
 
 @listings.route('/inventory/<inventory_id>')
+@login_required
 def view_inventory(inventory_id):
     inventory = Inventory.get('id', inventory_id)
     return render_template('listings/view_inventory.html', inventory=inventory)
 
 @listings.route('/listings/add', methods=['POST'])
+@login_required
 def add_listing():
     product = Product.get('id', request.form.get('product_id'))
     listing = Listing(
@@ -88,3 +92,15 @@ def add_listing():
         return redirect(url_for('listings.view_inventory', inventory_id=listing.inventory_id)), 409
     flash('Listing created')
     return redirect(url_for('listings.view_inventory', inventory_id=listing.inventory_id)), 201
+
+@listings.route('/api/inventories', methods=['GET'])
+@login_required
+def get_inventories():
+    inventories = current_user.inventories
+    return jsonify([{'id': inventory.id, 'name': inventory.name} for inventory in inventories])
+
+@listings.route('/api/products', methods=['GET'])
+@login_required
+def get_products():
+    products = current_user.products
+    return jsonify([{'id': product.id, 'name': product.name} for product in products])

@@ -5,10 +5,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{% endblock title %} | {{ app_name }}</title>
-  <link href="{{ url_for('static', filename='styles/output.css') }}" rel="stylesheet">  <style>
+  <link href="{{ url_for('static', filename='styles/output.css') }}" rel="stylesheet">
+  <style>
     html,
     body {
-      width: 100%;
+      width: 100;
       margin: 0;
       padding: 0;
     }
@@ -83,6 +84,9 @@
 </head>
 
 <body class="bg-gray-100 text-gray-900 relative">
+  {% if current_user %}
+  {{current_user.role_title}}
+  {%endif%}
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
   <ul id="flashed" class="flex flex-col w-[100%] fixed top-5 items-center bg-transparent">
