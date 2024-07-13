@@ -37,6 +37,7 @@ if __name__ == '__main__':
         Role.insert_roles()
         host = app.config['HOST']
         port = app.config['PORT']
+
     app.run(
         host=host,
         port=5500,

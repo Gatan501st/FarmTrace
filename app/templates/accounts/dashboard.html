@@ -93,10 +93,20 @@
 			{% if current_user.orders_placed %}
 			{% for order in current_user.orders_placed %}
 			<tr>
-				<td class="py-2">{{ order.order_date }}</td>
+				<td class="py-2">{{ order.order_date.strftime("%d %B %Y %H:%M") }}</td>
 				<td class="py-2">{{ order.quantity }}</td>
 				<td class="py-2">{{ order.total_price }}</td>
+				{% if order.shipment %}
+				<td class="py-2">{{ order.shipment.status }}</td>
+				{% else %}
 				<td class="py-2">{{ order.status }}</td>
+				{% endif %}
+				<td class="py-4 px-2 text-center">
+					<a href="{{url_for('orders.view_order', order_id=order.id)}}"
+						class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+						VIEW
+					</a>
+				</td>
 			</tr>
 			{% endfor %}
 			{% else %}
@@ -130,7 +140,11 @@
 				<td class="py-2">{{ order._created_at }}</td>
 				<td class="py-2">{{ order.quantity }} units</td>
 				<td class="py-2">{{ order.total_price }}</td>
+				{% if order.shipment %}
+				<td class="py-2">{{ order.shipment.status }}</td>
+				{% else %}
 				<td class="py-2">{{ order.status }}</td>
+				{% endif %}
 				<td class="py-2">{{ order.delivery_address }}</td>
 			</tr>
 			{% endfor %}
@@ -173,7 +187,7 @@
 				<td class="py-2">{{ shipment.created_at.strftime('%d %B %Y %H:%M') }}</td>
 				<td class="py-2">{{ shipment.updated_at.strftime('%d %B %Y %H:%M') }}</td>
 				<td class="py-2">{{ shipment.destination }}</td>
-				<td class="py-2">{{ shipment.get_checkpoints.locatiion }}</td>
+				<td class="py-2">{{ shipment.get_checkpoints.location }}</td>
 				<td class="py-2">{{ shipment.status }}</td>
 				<td class="py-4 px-2 text-center">
 					<a href="{{url_for('shipments.view_shipment', shipment_id=shipment.id)}}"

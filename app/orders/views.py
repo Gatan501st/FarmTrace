@@ -1,8 +1,27 @@
 from flask import render_template, redirect, url_for, request, make_response
-from flask_login import current_user
+from flask_login import current_user, login_required
 from . import orders
 from app.models import Listing, Order, Product
 from datetime import datetime
+
+
+def calculate_tracking_progress(checkpoints):
+    total_checkpoints = len(checkpoints)
+    completed_checkpoints = len(
+        [checkpoint for checkpoint in checkpoints if checkpoint.get('status')])
+    return (completed_checkpoints / total_checkpoints) * 100 if total_checkpoints else 0
+
+
+@orders.route('/<order_id>', methods=['GET'])
+@login_required
+def view_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    checkpoints = None
+    tracking_progress = 0
+    if order.shipment:
+        checkpoints = order.shipment.get_checkpoints
+        tracking_progress = calculate_tracking_progress(checkpoints)
+    return render_template('orders/view_order.html', order=order, tracking_progress=tracking_progress)
 
 
 @orders.route('/place_order/<listing_id>', methods=['GET', 'POST'])

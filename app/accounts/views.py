@@ -20,10 +20,8 @@ def sign_in():
         if user and user.verify_password(password):
             login_user(user)
             next = request.args.get('next')
-            print(next)
             if next is None or not next.startswith('/'):
                 next = url_for('accounts.dashboard')
-            print(next)
             return redirect(next)
         flash('Invalid Credentials', 'error')
     return render_template("accounts/sign_in.html")
@@ -50,7 +48,6 @@ def sign_up():
                     role = 'Administrator'
                 else:
                     abort(400)
-            print(roles.get(role))
             user = roles.get(role)(
                 company_name=request.form.get('company'),
                 firstname=request.form.get('firstname'),

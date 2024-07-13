@@ -37,7 +37,7 @@
 								<p class="text-sm text-gray-500">Ordered On: {{ order._created_at }}</p>
 								<form
 									action="{{url_for('shipments.add_shipment_order', shipment_id=shipment.id, order_id=order.id)}}"
-									method="post">
+									method="get">
 									<div class="flex items-center justify-between mt-2">
 										<button id="addShipmentButton"
 											class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
@@ -54,12 +54,11 @@
 
 			</ul>
 			<h3 class="text-2xl font-semibold mb-2">Ready To Ship:</h3>
-			<form action="{{url_for('shipments.dispatch_shipment', shipment_id=shipment.id)}}"
-				method="get">
+			<form action="{{url_for('shipments.dispatch_shipment', shipment_id=shipment.id)}}" method="get">
 				<div class="flex items-center justify-between mt-2">
 					<button id="dispatchShipment"
-						class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
-						type="submit">Dispatch Shipment</button>
+						disabled="{% if shipment.status == 'Processing' %}false{% else %}true{% endif %}" class="{% if shipment.status == 'Processing' %}bg-green-600 hover:bg-green-700{% else %} bg-gray-400 {% endif %}
+						text-white font-bold py-2 px-4 rounded" type="submit">Dispatch Shipment</button>
 				</div>
 			</form>
 			<ul class="flex flex-wrap divide-y divide-gray-200">
@@ -100,10 +99,9 @@
 	console.log(pendingOrderIDs)
 	addAlltoShipments.addEventListener('click', () => {
 		pendingOrderIDs.forEach(async (id) => {
-			console.log(id.textContent)
 			try {
 				const response = await fetch(`/shipments/{{shipment.id}}/add_order/${id.textContent}`, {
-					method: 'POST',
+					method: 'GET',
 				})
 				if (!response.ok) {
 					const errorData = await response.json()
@@ -111,7 +109,6 @@
 				}
 				const resp = await response.json()
 				window.location.reload()
-				alert(resp.message)
 			} catch (error) {
 				alert(error.message)
 			}

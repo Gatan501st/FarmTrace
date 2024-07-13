@@ -13,11 +13,15 @@ from . import shipments
 def create_shipment():
     shipment = Shipment(
         destination=request.form.get('destination'),
-        checkpoints=json.dumps({
-            'locatiion': 'Main WareHouse',
-            'date': f'{datetime.now()}',
-            'status': 'Processing'
-        }),
+        checkpoints=json.dumps(
+            [
+                {
+                    'location': 'Main WareHouse',
+                    'date': f'{datetime.now()}',
+                    'status': 'Processing'
+                }
+			]
+        ),
         user_id=current_user.id
     )
     shipment.save()
@@ -57,7 +61,10 @@ def dispatch_shipment(shipment_id):
     if shipment is None:
         flash('Shipment not found')
         return redirect(url_for('accounts.dashboard'))
-    shipment.status = 'Dispatched'
+    shipment.update_checkpoint(
+        location=request.form.get('location'),
+        status=f'Dispatched'
+	)
     shipment.save()
     flash('Shipment dispatched for shipping')
     return redirect(url_for('accounts.dashboard'))

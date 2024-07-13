@@ -38,11 +38,9 @@ def create_inventory():
 
 @listings.route('/inventory/<inventory_id>/edit', methods=['PUT'])
 def edit_inventory(inventory_id):
-    print(request.form.to_dict())
     inventory = Inventory.get('id', inventory_id)
     if inventory is None:
         return make_response({'message': 'Inventory not found'}), 404
-    print(request.form.get('name-edited'))
     inventory.name = request.form.get('name-edited')
     inventory.description = request.form.get('description-edited')
     inventory.save()
