@@ -3,7 +3,7 @@
 {% block title %}MarketPlace{% endblock title %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto py-8">
+<div class="w-full mx-auto py-8">
 	{% if current_user.role_title != 'Farmer' %}
 	{% if current_user.inventory %}
 	<a href="{{url_for('listings.view_inventory', inventory_id=current_user.inventory.id)}}"
@@ -58,7 +58,6 @@
 		<!-- Product Listings -->
 		{% if current_user.role_title != 'Farmer' and current_user.role_title != 'Administrator' %}
 		<div id="my-listings" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-			<!-- Example My Listings (Replace with dynamic data) -->
 			{% for product in my_listings %}
 			<div class="bg-gray-200 rounded-lg overflow-hidden shadow-md">
 				<img class="bg-contain w-full bg-center p-2" src="../{{ product.avatar_path }}" alt="{{ product.name }}"
