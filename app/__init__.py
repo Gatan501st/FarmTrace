@@ -66,4 +66,12 @@ def create_app(config_name="default"):
     
     app.register_blueprint(products_blueprint, url_prefix="/products")
 
+    from .orders import orders as orders_blueprint
+
+    app.register_blueprint(orders_blueprint, url_prefix='/orders')
+
+    from .shipments import shipments as shipments_blueprint
+
+    app.register_blueprint(shipments_blueprint, url_prefix='/shipments')
+
     return app

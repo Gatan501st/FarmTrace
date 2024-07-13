@@ -9,13 +9,14 @@ class Product(BaseModel, db.Model):
     __tablename__ = 'products'
     name = Column(String(25), nullable=False)
     description = Column(Text, nullable=False)
-    batch_sizes = Column(JSON, nullable=False)
 
     batches = relationship('Batch', back_populates='product')
     manufacturer_id = Column(String(64), ForeignKey('manufacturers.id'))
     manufacturer = relationship('Manufacturer', back_populates='products')
     
     listings = relationship('Listing', back_populates='product')
+
+    orders = relationship('Order', back_populates='product')
 
     def generate_qrcode(self):
         """

@@ -19,3 +19,5 @@ class Listing(BaseModel, db.Model):
 
     product_id = Column(String(64), ForeignKey('products.id'))
     product = relationship('Product', back_populates='listings')
+
+    orders = relationship('Order', back_populates='listing')

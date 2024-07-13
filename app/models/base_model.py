@@ -17,6 +17,10 @@ class BaseModel:
             setattr(self, key, val)
         db.session.add(self)
 
+    @property
+    def _created_at(self):
+        return self.created_at.strftime('%d %B %Y')
+
     def save(self):
         self.updated_at = datetime.now()
         db.session.commit()

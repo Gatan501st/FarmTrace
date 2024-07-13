@@ -1,4 +1,4 @@
-from flask import render_template, request, flash, redirect, url_for, jsonify, current_app
+from flask import render_template, request, flash, redirect, url_for, jsonify, current_app, make_response
 from flask_login import current_user, login_required
 import os
 from werkzeug.utils import secure_filename
@@ -11,11 +11,8 @@ from . import listings
 def view_listings():
     products = Listing.query.all()
     my_listings = []
-    inventories = current_user.inventories
-    for inventory in inventories:
-        for listing in inventory.listings:
-            my_listings.append(listing)
-    print(my_listings)
+    if current_user.inventory:
+        my_listings = current_user.inventory.listings
     return render_template('listings/view_listings.html', products=products, my_listings=my_listings, user=current_user)
 
 
@@ -23,18 +20,32 @@ def view_listings():
 @login_required
 def create_inventory():
     inventory = Inventory(
-        name=request.form.get('name'),
-        description=request.form.get('description'),
-        
+        name=request.form.get('name') or f'{current_user.firstname}\'s Inventory',
+        description=request.form.get('description') or 'A simple inventory to keep track of your listings',
+
         user_id=current_user.id,
         user=current_user
-	)
+    )
     inventory.save()
     if Inventory.get('id', inventory.id) is None:
         flash('Error creating inventory', 'error')
         return redirect(url_for('listings.view_listings')), 409
     flash('Inventory created')
     return redirect(url_for('listings.view_inventory', inventory_id=inventory.id)), 201
+
+
+@listings.route('/inventory/<inventory_id>/edit', methods=['PUT'])
+def edit_inventory(inventory_id):
+    print(request.form.to_dict())
+    inventory = Inventory.get('id', inventory_id)
+    if inventory is None:
+        return make_response({'message': 'Inventory not found'}), 404
+    print(request.form.get('name-edited'))
+    inventory.name = request.form.get('name-edited')
+    inventory.description = request.form.get('description-edited')
+    inventory.save()
+
+    return make_response({'message': 'Changes saved'})
 
 
 @listings.route('/inventory/<inventory_id>')
@@ -49,16 +60,16 @@ def view_inventory(inventory_id):
 def add_listing():
     product = Product.get('id', request.form.get('product_id'))
     listing = Listing(
-        product_name=request.form.get('name'),
+        product_name=product.name,
         description=request.form.get('description'),
         price=request.form.get('price'),
         available_stock=request.form.get('quantity'),
         min_order=request.form.get('min_order'),
         avatar_path=request.form['avatar'],
-    
-        inventory_id=request.form.get('inventory_id'),
-        inventory=Inventory.get('id', request.form.get('inventory_id')),
-    
+
+        inventory_id=current_user.inventory.id,
+        inventory=current_user.inventory,
+
         product_id=product.id,
         product=product
     )
@@ -81,7 +92,7 @@ def get_inventories():
 @login_required
 def get_products():
     products = current_user.products
-    return jsonify([{'id': product.id, 'name': product.name} for product in products])
+    return jsonify([{'id': product.id, 'name': product.name, 'description': product.description} for product in products])
 
 
 UPLOAD_FOLDER = 'app/static/images/listings/avatars'
@@ -95,16 +106,15 @@ if not os.path.exists(UPLOAD_FOLDER):
 def upload_avatar():
     if 'avatar' not in request.files:
         return jsonify({'success': False, 'error': 'No file part'})
-    
+
     file = request.files['avatar']
     if file.filename == '':
         return jsonify({'success': False, 'error': 'No selected file'})
-    
+
     if file:
         filename = secure_filename(file.filename)
         file_path = os.path.join(UPLOAD_FOLDER, filename)
         file.save(file_path)
         return jsonify({'success': True, 'file_path': file_path})
-    
-    return jsonify({'success': False, 'error': 'Unknown error occurred'})
 
+    return jsonify({'success': False, 'error': 'Unknown error occurred'})

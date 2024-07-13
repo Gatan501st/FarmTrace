@@ -11,4 +11,4 @@ class Inventory(BaseModel, db.Model):
     listings = relationship('Listing', back_populates='inventory')
 
     user_id = Column(String(64), ForeignKey('users.id'))
-    user = relationship('User', back_populates='inventories')
+    user = relationship('User', back_populates='inventory', uselist=False)

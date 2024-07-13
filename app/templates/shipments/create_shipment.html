@@ -1,0 +1,35 @@
+<!-- Add Product Modal -->
+<div id="createShipmentModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full relative">
+        <button id="closeShipmentModal"
+            class="absolute top-2 right-5 font-bold text-3xl text-gray-500 hover:text-gray-700">
+            &times;
+        </button>>
+        <h2 class="text-2xl font-bold mb-4">Add Product</h2>
+        <form method="post" action="{{ url_for('shipments.create_shipment') }}">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="destination">Destination</label>
+                <textarea
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="destination" name="destination" placeholder="Shipment Destination"></textarea>
+            </div>
+            <div class="flex items-center justify-between">
+                <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit">Create</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById('createShipmentButton').addEventListener('click', function () {
+        document.getElementById('createShipmentModal').classList.remove('hidden');
+    });
+
+    document.getElementById('closeShipmentModal').addEventListener('click', function () {
+        document.getElementById('createShipmentModal').classList.add('hidden');
+    });
+
+    document.querySelector('form').addEventListener('submit', function (event) {
+		event.target.reset()
+    });
+</script>

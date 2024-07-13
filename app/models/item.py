@@ -11,3 +11,6 @@ class Item(BaseModel, db.Model):
 
     batch_id = Column(String(64), ForeignKey('batches.id'))
     batch = relationship('Batch', back_populates='items')
+
+    order_id = Column(String(64), ForeignKey('orders.id'))
+    order = relationship('Order', back_populates='items')

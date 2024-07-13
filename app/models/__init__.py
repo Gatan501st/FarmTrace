@@ -13,3 +13,5 @@ from .batch import Batch as Batch
 from .item import Item as Item
 from .listing import Listing as Listing
 from .inventory import Inventory as Inventory
+from .order import Order as Order
+from .shipment import Shipment as Shipment

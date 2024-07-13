@@ -1,9 +1,13 @@
 <!-- Add Batch Popup Form -->
 <div id="createInventory" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-	<div class="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full">
+	<div class="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full relative">
+		<button id="closeInventoryModal"
+			class="absolute top-2 right-5 font-bold text-3xl text-gray-500 hover:text-gray-700">
+			&times;
+		</button>
 		<h2 class="text-2xl font-bold text-center">Create Inventory</h2>
 		<h3 class="text-sm m-2 text-center">An inventory allows you to manage and keep track of your stock</h3>
-		<form id="addBatchForm" method="post" action="{{ url_for('listings.create_inventory') }}">
+		<form id="addBatchForm" method="post" action="">
 			<div class="mb-4">
 				<label class="block text-gray-700 text-sm font-bold mb-2" for="name">Name</label>
 				<input
@@ -14,13 +18,12 @@
 				<label class="block text-gray-700 text-sm font-bold mb-2" for="description">Description</label>
 				<input
 					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-					id="description" name="description" type="text" >
+					id="description" name="description" type="text">
 			</div>
 			<div class="flex items-center justify-between">
 				<button id="createInventorySubmit"
-					class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit">Create</button>
-				<button id="closeInventoryModal" type="button"
-					class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Cancel</button>
+					class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+					type="submit">Create</button>
 			</div>
 		</form>
 	</div>
@@ -33,15 +36,27 @@
 	document.getElementById('closeInventoryModal').addEventListener('click', function () {
 		document.getElementById('createInventory').classList.add('hidden');
 	});
-
-	document.getElementById('createInventorySubmit').addEventListener('click', function () {
+	const form = document.querySelector('form')
+	form.addEventListener('submit', async (event) => {
+		event.preventDefault()
 		// Retrieve form data
-		var name = document.getElementById('name').value;
-		var description = document.getElementById('description').value;
+		const formData = new FormData(form)
 
-		// Hide modal
-		document.getElementById('addBatchModal').classList.add('hidden');
-
+		try {
+			const response = await fetch('/listings/inventory', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: formData
+			})
+			if (!response.ok) {
+				const errorData = await response.json()
+				throw new Error(errorData.message)
+			}
+			// Hide modal
+			document.getElementById('createInventory').classList.add('hidden');
+		} catch (error) {
+			alert(error.message)
+		}
 		// Clear form inputs
 		document.getElementById('name').value = '';
 		document.getElementById('description').value = '';

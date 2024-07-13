@@ -56,6 +56,8 @@ def sign_up():
                 lastname=request.form.get('lastname'),
                 email=request.form.get('email'),
                 password=request.form.get('password'),
+                location=request.form.get('location'),
+                phone=request.form.get('phone')
             )
             # send_confirmation_email(user.email)
             user.save()

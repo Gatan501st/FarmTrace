@@ -15,23 +15,13 @@
         <!-- Modal Content -->
         <h2 class="text-2xl font-bold mb-4">Create Listing</h2>
         <form id="createListingForm" action="/listings/add" method="POST">
-            <div class="flex gap-4">
-                <div class="mb-4 w-1/2">
-                    <label for="inventoryId" class="block text-gray-700 font-bold mb-2">Inventory</label>
-                    <select id="inventoryId" name="inventory_id"
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        required>
-                        <!-- Options will be populated dynamically -->
-                    </select>
-                </div>
-                <div class="mb-4 w-1/2">
-                    <label for="productId" class="block text-gray-700 font-bold mb-2">Product</label>
-                    <select id="productId" name="product_id"
-                        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        required>
-                        <!-- Options will be populated dynamically -->
-                    </select>
-                </div>
+            <div class="mb-4">
+                <label for="productId" class="block text-gray-700 font-bold mb-2">Product</label>
+                <select id="productId" name="product_id"
+                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    required>
+                    <!-- Options will be populated dynamically -->
+                </select>
             </div>
             <div class="mb-4">
                 <label for="description" class="block text-gray-700 font-bold mb-2">Description</label>
@@ -82,6 +72,12 @@
         const createListingForm = document.getElementById('createListingForm');
         const avatarInput = document.getElementById('avatar');
         let avatarPath = '';
+        const productSelect = document.querySelector('#productId')
+        var products = {}
+        var description = document.querySelector('#description')
+        productSelect.addEventListener('input', () => {
+            description.value = products[productSelect.value]
+        })
 
         openModalButton.addEventListener('click', function () {
             createListingModal.classList.remove('hidden');
@@ -143,28 +139,18 @@
                 });
         });
 
-        // Fetch and populate inventory and product options
-        fetch('/listings/api/inventories')
-            .then(response => response.json())
-            .then(data => {
-                const inventorySelect = document.getElementById('inventoryId');
-                data.forEach(inventory => {
-                    const option = document.createElement('option');
-                    option.value = inventory.id;
-                    option.textContent = inventory.name;
-                    inventorySelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error('Error fetching inventories:', error));
-
         fetch('/listings/api/products')
             .then(response => response.json())
             .then(data => {
                 const productSelect = document.getElementById('productId');
                 data.forEach(product => {
+                    console.log(product)
                     const option = document.createElement('option');
                     option.value = product.id;
                     option.textContent = product.name;
+                    option.setAttribute('description', product.description)
+                    products[product.id] = product.description
+                    description.value = products[productSelect.value]
                     productSelect.appendChild(option);
                 });
             })

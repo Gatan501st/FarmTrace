@@ -1,3 +1,5 @@
+from flask import current_app
+from app.models import Listing
 import os
 
 from flask_migrate import Migrate
@@ -10,6 +12,7 @@ from app.models import Role
 config_name = os.getenv("FLASK_CONFIG") or "default"
 app = create_app(config_name)
 migrate = Migrate(app, db)
+
 
 @app.shell_context_processor
 def make_shell_context():
@@ -27,6 +30,7 @@ def deploy():
 
     # Create or update user roles
     Role.insert_roles()
+
 
 if __name__ == '__main__':
     with app.app_context():

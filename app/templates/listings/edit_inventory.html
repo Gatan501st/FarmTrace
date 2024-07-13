@@ -1,0 +1,71 @@
+<!-- Add Batch Popup Form -->
+<div id="editInventory" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+	<div class="bg-white rounded-lg shadow-lg p-8 max-w-lg w-full relative">
+		<button id="closeEditModal"
+			class="absolute top-2 right-5 font-bold text-3xl text-gray-500 hover:text-gray-700">
+			&times;
+		</button>
+		<h2 class="text-2xl font-bold text-center">Create Inventory</h2>
+		<h3 class="text-sm m-2 text-center">An inventory allows you to manage and keep track of your stock</h3>
+		<form id="editInventoryForm" method="post" action="">
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="name-edited">Name</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="name-edited" name="name-edited" type="text" placeholder="Name of Your Inventory" value="{{inventory.name}}">
+			</div>
+			<div class="mb-4">
+				<label class="block text-gray-700 text-sm font-bold mb-2" for="description-edited">Description</label>
+				<input
+					class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+					id="description-edited" name="description-edited" type="text" value="{{inventory.description}}">
+			</div>
+			<div class="flex items-center justify-between">
+				<button id="editInventorySubmit"
+					class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+					type="submit">Save</button>
+			</div>
+		</form>
+	</div>
+</div>
+<script>
+	document.getElementById('showEditModal').addEventListener('click', function () {
+		document.getElementById('editInventory').classList.remove('hidden');
+	});
+
+	document.getElementById('closeEditModal').addEventListener('click', function () {
+		document.getElementById('editInventory').classList.add('hidden');
+	});
+	const editForm = document.querySelector('#editInventoryForm')
+	console.log(editForm.id)
+	editForm.addEventListener('submit', async (event) => {
+		event.preventDefault()
+		// Retrieve form data
+		const formData = new FormData(editForm)
+		formData.forEach((val) => {
+			console.log(val)
+		})
+		console.log()
+
+		try {
+			const response = await fetch('/listings/inventory/{{inventory.id}}/edit', {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: formData
+			})
+			if (!response.ok) {
+				const errorData = await response.json()
+				throw new Error(errorData.message)
+			}
+			const resp = await response.json()
+			alert(resp.message)
+			// Hide modal
+			document.getElementById('editInventory').classList.add('hidden');
+		} catch (error) {
+			alert(error.message)
+		}
+		// Clear form inputs
+		document.getElementById('name-edited').value = '';
+		document.getElementById('description-edited').value = '';
+	});
+</script>

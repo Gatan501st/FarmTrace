@@ -1,4 +1,6 @@
-import json, csv, os
+import json
+import csv
+import os
 from flask import render_template, request, redirect, flash, make_response, url_for, abort
 from flask_login import login_required, current_user
 from datetime import datetime
@@ -13,16 +15,11 @@ from sqlalchemy.exc import IntegrityError
 
 @products.route('/', methods=['POST'])
 def add_product():
-    batches = request.form.get('batch_sizes')[1:-1].split(',')
-    for batch in batches:
-        print(batches)
-        batch = float(batch)
-    batches = json.dumps(batches)
     product = Product(
         name=request.form.get('name'),
         description=request.form.get('description'),
-        batch_sizes=batches,
-        manufacturer=current_user,
+
+        manufacturer_id=current_user.id,
     )
     product.save()
     if not Product.get('id', product.id):
@@ -52,10 +49,13 @@ def add_batch(product_id):
     batch = Batch(
         batch_number=request.form.get('batch_number'),
         # qrcode = request.form.get('batch_number'),
-        manufacture_date=datetime.strptime(request.form.get('manufacture_date'), '%Y-%m-%d'),
-        expiry_date=datetime.strptime(request.form.get('expiry_date'), '%Y-%m-%d'),
+        manufacture_date=datetime.strptime(
+            request.form.get('manufacture_date'), '%Y-%m-%d'),
+        expiry_date=datetime.strptime(
+            request.form.get('expiry_date'), '%Y-%m-%d'),
         size=request.form.get('size'),
-        
+        measurement=request.form.get('measurement'),
+
         product_id=product.id,
         product=product
     )
@@ -82,22 +82,29 @@ def batch_upload(product_id):
     batches.save(file_path)
     if not batches or not batches.filename.split('.')[1] == 'csv':
         abort(400)
+    num_saved = 0
     with open(file_path, 'r', newline="") as f:
         values = csv.reader(f)
+        total_batches = len(values)
         for value in values:
-            if not len(value) < 3:
-                try:
-                    batch = Batch(
-                        batch_number=value[0],
-                        manufacture_date=datetime.strptime(value[1], '%Y-%m-%d'),
-                        expiry_date=datetime.strptime(value[2], '%Y-%m-%d'),
-                        size=value[3],
-                        
-                        product_id=product_id,
-                        product=product
-                    )
-                    batch.save()
-                except IntegrityError:
-                    return make_response({'message': 'Failed: Similar batch numbers detected'}), 409
+            try:
+                batch = Batch(
+                    batch_number=value[0],
+                    manufacture_date=datetime.strptime(
+                        value[1], '%Y-%m-%d'),
+                    expiry_date=datetime.strptime(value[2], '%Y-%m-%d'),
+                    size=value[3],
+                    measurement=value[4],
+
+                    product_id=product_id,
+                    product=product
+                )
+                batch.save()
+                num_saved += 1
+            except IndexError:
+                pass
+            except IntegrityError:
+                os.remove(file_path)
+                return make_response({'message': 'Failed: Similar batch numbers detected'}), 409
     os.remove(file_path)
-    return make_response({'message': 'Batches uploaded successfully'}), 201
+    return make_response({'message': f'Added {num_saved} out of {total_batches} batches'}), 201

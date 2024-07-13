@@ -20,7 +20,9 @@ Sign Up
     <form action="{{ url_for('accounts.sign_up') }}" method="POST">
       <div class="flex flex-col md:flex-row gap-4">
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700" for="firstname">First Name</label>
+          <label class="block text-sm font-medium text-gray-700" for="firstname">
+            First Name <strong style="color: red;">*</strong>
+          </label>
           <input
             class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
             type="text" id="firstname" name="firstname" required>
@@ -29,7 +31,7 @@ Sign Up
           <label class="block text-sm font-medium text-gray-700" for="lastname">Last Name</label>
           <input
             class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
-            type="text" id="lastname" name="lastname" required>
+            type="text" id="lastname" name="lastname">
         </div>
       </div>
       <div class="mb-4">
@@ -39,23 +41,46 @@ Sign Up
           type="text" id="company" name="company">
       </div>
       <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700" for="email">Email</label>
+        <label class="block text-sm font-medium text-gray-700" for="email">Email
+          <strong style="color: red;">*</strong>
+        </label>
         <input
           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
           type="email" id="email" name="email" required>
       </div>
       <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700" for="role">What best describes you</label>
-        <select class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
-        name="role" id="role">
+        <label class="block text-sm font-medium text-gray-700" for="role">What best describes you
+          <strong style="color: red;">*</strong>
+        </label>
+        <select
+          class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+          name="role" id="role">
           <option value="Farmer">Farmer</option>
           <option value="Manufacturer">Manufacturer</option>
           <option value="Wholesaler">Wholesaler</option>
           <option value="Retailer">Retailer</option>
         </select>
       </div>
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700" for="location">
+            Location
+          </label>
+          <input
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+            type="text" id="location" name="location">
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700" for="phone">Primary Phone</label>
+          <input
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+            type="text" id="phone" name="phone">
+        </div>
+      </div>
       <div class="mb-4 relative">
-        <label class="block text-sm font-medium text-gray-700" for="password">Password</label>
+        <label class="block text-sm font-medium text-gray-700" for="password">Password
+          <strong style="color: red;">*</strong>
+        </label>
         <input
           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
           type="password" id="password" name="password" required>
@@ -63,7 +88,9 @@ Sign Up
           id="view-password" alt="">
       </div>
       <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-700" for="confirm_password">Confirm Password</label>
+        <label class="block text-sm font-medium text-gray-700" for="confirm_password">Confirm Password
+          <strong style="color: red;">*</strong>
+        </label>
         <input
           class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
           type="password" id="confirmPassword" name="confirm_password" required>
@@ -83,10 +110,10 @@ Sign Up
     const message = document.getElementById('message');
     const form = document.querySelector('form');
     const viewPassword = document.querySelector('#view-password')
-    const email =document.querySelector('#email')
+    const email = document.querySelector('#email')
     const role = document.querySelector('#role')
     const company = document.querySelector('#company')
-    
+
     role.addEventListener('input', () => {
       if (role.value == 'Manufacturer') {
         company.required = true
