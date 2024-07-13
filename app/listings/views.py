@@ -4,10 +4,12 @@ import os
 from werkzeug.utils import secure_filename
 from app.models import Listing, Inventory, Product
 from . import listings
+from app.decorators import email_verified
 
 
 @listings.route('/')
 @login_required
+@email_verified
 def view_listings():
     products = Listing.query.all()
     my_listings = []

@@ -83,21 +83,19 @@
 	<table class="min-w-full bg-white">
 		<thead>
 			<tr>
-				<th class="py-2">Order ID</th>
-				<th class="py-2">Date</th>
-				<th class="py-2">Total</th>
+				<th class="py-2">Order Dtae</th>
+				<th class="py-2">Units Purchased</th>
+				<th class="py-2">Total Spent</th>
 				<th class="py-2">Status</th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody class="text-center">
 			{% if current_user.orders_placed %}
 			{% for order in current_user.orders_placed %}
 			<tr>
-				<td class="py-2">{{ order.id }}</td>
-				<td class="py-2">{{ order.date }}</td>
+				<td class="py-2">{{ order.order_date }}</td>
+				<td class="py-2">{{ order.quantity }}</td>
 				<td class="py-2">{{ order.total_price }}</td>
-				<td class="py-2">{{ order.sender.firstname }}</td>
-				<td class="py-2">{{ order.recipient.firstname }}</td>
 				<td class="py-2">{{ order.status }}</td>
 			</tr>
 			{% endfor %}
@@ -113,7 +111,7 @@
 
 <!-- Orders Received -->
 {% if current_user.role_title != 'Farmer' %}
-<h3 class="text-xl font-semibold mb-4 mt-6">Orders Received</h3>
+<h3 class="text-xl font-semibold mb-4 mt-6">Orders Requests</h3>
 <div class="overflow-x-auto">
 	<table class="min-w-full bg-white">
 		<thead class="text-center">
@@ -138,7 +136,7 @@
 			{% endfor %}
 			{% else %}
 			<tr class="text-center w-full">
-				<td colspan="4" class="p-2">No Orders yet.</td>
+				<td colspan="5" class="p-2">No Orders yet.</td>
 			</tr>
 			{% endif %}
 		</tbody>
@@ -148,7 +146,6 @@
 
 <!-- Reports and Analytics -->
 {% if current_user.role_title != 'Farmer' %}
-<h3 class="text-xl font-semibold mb-4 mt-6">Shipments</h3>
 <div class="overflow-x-auto">
 	<div class="w-full p-2">
 		<h3 class="text-xl font-semibold mb-4 mt-6 w-full">Shipments
@@ -188,7 +185,7 @@
 			{% endfor %}
 			{% else %}
 			<tr>
-				<td colspan="4" class="p-2 text-center">No Shipment History</td>
+				<td colspan="6" class="p-2 text-center">No Shipment History</td>
 			</tr>
 			{% endif %}
 		</tbody>
