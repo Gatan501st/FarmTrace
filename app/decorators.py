@@ -1,13 +1,13 @@
 from functools import wraps
 from app.models import User
-from flask import redirect, url_for, abort
+from flask import redirect, url_for, abort, request
 from flask_login import current_user
 
 def email_verified(f):
     @wraps(f)
     def decorator(*args, **kwargs):
         if not current_user.confirmed:
-            return redirect(url_for('accounts.verify_email'))
+            return redirect(url_for('accounts.verify_email', next=request.url))
         return f(*args, **kwargs)
     return decorator
 

@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from . import orders
 from app.models import Listing, Order, Product
 from datetime import datetime
-
+from app.decorators import email_verified
 
 def calculate_tracking_progress(checkpoints):
     total_checkpoints = len(checkpoints)
@@ -14,6 +14,7 @@ def calculate_tracking_progress(checkpoints):
 
 @orders.route('/<order_id>', methods=['GET'])
 @login_required
+@email_verified
 def view_order(order_id):
     order = Order.query.get_or_404(order_id)
     checkpoints = None
