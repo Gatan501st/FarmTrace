@@ -2,12 +2,12 @@ import qrcode, os
 from uuid import uuid4
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = 'app/static/qrcodes/'
+UPLOAD_FOLDER = 'static/qrcodes/'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
 def generate_qr(data, filename):
-    file_path = os.path.join(UPLOAD_FOLDER, filename)
+    file_path = os.path.join(f'app/{UPLOAD_FOLDER}', filename)
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,

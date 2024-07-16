@@ -187,7 +187,7 @@
 				<td class="py-2">{{ shipment.created_at.strftime('%d %B %Y %H:%M') }}</td>
 				<td class="py-2">{{ shipment.updated_at.strftime('%d %B %Y %H:%M') }}</td>
 				<td class="py-2">{{ shipment.destination }}</td>
-				<td class="py-2">{{ shipment.get_checkpoints.location }}</td>
+				<td class="py-2">{{ shipment.current_location }}</td>
 				<td class="py-2">{{ shipment.status }}</td>
 				<td class="py-4 px-2 text-center">
 					<a href="{{url_for('shipments.view_shipment', shipment_id=shipment.id)}}"

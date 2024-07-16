@@ -15,6 +15,7 @@
         <!-- Modal Content -->
         <h2 class="text-2xl font-bold mb-4">Create Listing</h2>
         <form id="createListingForm" action="/listings/add" method="POST">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
             <div class="mb-4">
                 <label for="productId" class="block text-gray-700 font-bold mb-2">Product</label>
                 <select id="productId" name="product_id"
@@ -71,12 +72,13 @@
         const createListingForm = document.getElementById('createListingForm');
         const avatarInput = document.getElementById('avatar');
         let avatarPath = '';
-        const productSelect = document.querySelector('#productId')
-        var products = {}
-        var description = document.querySelector('#description')
+        const productSelect = document.querySelector('#productId');
+        var products = {};
+        var description = document.querySelector('#description');
+
         productSelect.addEventListener('input', () => {
-            description.value = products[productSelect.value]
-        })
+            description.value = products[productSelect.value]['description'];
+        });
 
         openModalButton.addEventListener('click', function () {
             createListingModal.classList.remove('hidden');
@@ -99,6 +101,9 @@
 
             fetch('/listings/upload/avatar', {
                 method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
                 body: formData,
             })
                 .then(response => response.json())
@@ -122,6 +127,9 @@
 
             fetch('/listings/add', {
                 method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
                 body: formData,
             })
                 .then(response => {
@@ -143,15 +151,17 @@
             .then(data => {
                 const productSelect = document.getElementById('productId');
                 data.forEach(product => {
-                    console.log(product)
                     const option = document.createElement('option');
                     option.value = product.id;
                     option.textContent = product.name;
-                    option.setAttribute('description', product.description)
-                    products[product.id] = product.description
-                    description.value = products[productSelect.value]
+                    option.setAttribute('description', product.description);
+                    products[product.id] = product.description;
                     productSelect.appendChild(option);
                 });
+                // Set the initial description based on the first product in the list
+                if (data.length > 0) {
+                    description.value = products[data[0].id];
+                }
             })
             .catch(error => console.error('Error fetching products:', error));
     });

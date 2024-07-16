@@ -16,7 +16,7 @@ def create_shipment():
         checkpoints=json.dumps(
             [
                 {
-                    'location': 'Main WareHouse',
+                    'location': request.form.get('current_location'),
                     'date': f'{datetime.now()}',
                     'status': 'Processing'
                 }
@@ -41,18 +41,21 @@ def view_shipment(shipment_id):
     return render_template('shipments/view_shipment.html', shipment=shipment)
 
 
-@shipments.route('<shipment_id>/add_order/<order_id>')
+@shipments.route('<shipment_id>/add_order/<order_id>', methods=['POST'])
 def add_shipment_order(shipment_id, order_id):
     shipment = Shipment.get('id', shipment_id)
     if not shipment:
-        return make_response({'message': 'Shipment not found'})
+        flash('Shipment not found')
+        return redirect(url_for('shipments.view_shipment', shipment_id=shipment.id))
     order = Order.get('id', order_id)
     if not order:
-        return make_response({'message': 'Order not found'})
+        flash('Order not found')
+        return redirect(url_for('shipments.view_shipment', shipment_id=shipment.id))
     order.shipment_id = shipment.id
     order.qrcode = generate_qr(order, f'{order.id}.jpg')
     order.save()
-    return make_response({'message': 'Order added successfully'})
+    flash('Order added successfully')
+    return redirect(url_for('shipments.view_shipment', shipment_id=shipment.id))
 
 
 @shipments.route('<shipment_id>/dispatch')
@@ -63,7 +66,7 @@ def dispatch_shipment(shipment_id):
         return redirect(url_for('accounts.dashboard'))
     shipment.update_checkpoint(
         location=request.form.get('location'),
-        status=f'Dispatched'
+        status='Dispatched'
 	)
     shipment.save()
     flash('Shipment dispatched for shipping')

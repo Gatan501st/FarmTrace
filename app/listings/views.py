@@ -9,7 +9,6 @@ from app.decorators import email_verified
 
 @listings.route('/')
 @login_required
-@email_verified
 def view_listings():
     products = Listing.query.all()
     my_listings = []
@@ -20,6 +19,7 @@ def view_listings():
 
 @listings.route('/inventory', methods=['POST'])
 @login_required
+@email_verified
 def create_inventory():
     inventory = Inventory(
         name=request.form.get('name') or f'{current_user.firstname}\'s Inventory',
@@ -33,10 +33,12 @@ def create_inventory():
         flash('Error creating inventory', 'error')
         return redirect(url_for('listings.view_listings')), 409
     flash('Inventory created')
-    return redirect(url_for('listings.view_inventory', inventory_id=inventory.id)), 201
+    return redirect(url_for('listings.view_inventory', inventory_id=inventory.id))
 
 
 @listings.route('/inventory/<inventory_id>/edit', methods=['PUT'])
+@login_required
+@email_verified
 def edit_inventory(inventory_id):
     inventory = Inventory.get('id', inventory_id)
     if inventory is None:
@@ -50,6 +52,7 @@ def edit_inventory(inventory_id):
 
 @listings.route('/inventory/<inventory_id>')
 @login_required
+@email_verified
 def view_inventory(inventory_id):
     inventory = Inventory.get('id', inventory_id)
     return render_template('listings/view_inventory.html', inventory=inventory)
@@ -57,6 +60,7 @@ def view_inventory(inventory_id):
 
 @listings.route('/add', methods=['POST'])
 @login_required
+@email_verified
 def add_listing():
     product = Product.get('id', request.form.get('product_id'))
     listing = Listing(
@@ -95,7 +99,7 @@ def get_products():
     return jsonify([{'id': product.id, 'name': product.name, 'description': product.description} for product in products])
 
 
-UPLOAD_FOLDER = 'app/static/images/listings/avatars'
+UPLOAD_FOLDER = 'static/images/listings/avatars'
 
 # Ensure the upload folder exists
 if not os.path.exists(UPLOAD_FOLDER):
@@ -114,7 +118,7 @@ def upload_avatar():
     if file:
         filename = secure_filename(file.filename)
         file_path = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(file_path)
+        file.save(f'app/{file_path}')
         return jsonify({'success': True, 'file_path': file_path})
 
     return jsonify({'success': False, 'error': 'Unknown error occurred'})

@@ -19,18 +19,29 @@ class User(BaseModel, UserMixin, db.Model):
     password_hash = Column(String(128))
     confirmed = Column(Boolean, default=False)
     confirmed_on = Column(DateTime)
-    location = Column(String(64))
     phone = Column(String(64))
+
+    address = Column(String(64))
+    city = Column(String(64))
+    state = Column(String(64))
+    zipcode = Column(String(64))
+
+    two_factor = Column(Boolean)
+    sms_notifications = Column(Boolean)
+    email_notifications = Column(Boolean)
 
     role_title = Column(String(64), ForeignKey('roles.title'))
     role = relationship('Role', back_populates='users')
 
     inventory = relationship('Inventory', back_populates='user', uselist=False)
 
-    shipments = relationship('Shipment', back_populates='user', primaryjoin="and_(Shipment.user_id==User.id)")
+    shipments = relationship(
+        'Shipment', back_populates='user', primaryjoin="and_(Shipment.user_id==User.id)")
 
-    orders_placed = relationship('Order', back_populates='recipient', primaryjoin="and_(Order.recipient_id==User.id)")
-    orders_received = relationship('Order', back_populates='sender', overlaps="orders_placed", primaryjoin="and_(Order.sender_id==User.id)")
+    orders_placed = relationship(
+        'Order', back_populates='recipient', primaryjoin="and_(Order.recipient_id==User.id)")
+    orders_received = relationship('Order', back_populates='sender',
+                                   overlaps="orders_placed", primaryjoin="and_(Order.sender_id==User.id)")
 
     __mapper_args__ = {
         'polymorphic_identity': 'User',

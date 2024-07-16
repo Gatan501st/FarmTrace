@@ -24,7 +24,7 @@ class Shipment(BaseModel, db.Model):
         checkpoints.append({
             'location': location,
             'date': f'{datetime.datetime.now()}',
-            'statuus': status
+            'status': status
         })
         self.checkpoints = json.dumps(checkpoints)
 
@@ -34,4 +34,7 @@ class Shipment(BaseModel, db.Model):
 
     @property
     def status(self):
-        return self.get_checkpoints[-1].status
+        return self.get_checkpoints[-1].get('statuus')
+    @property
+    def current_location(self):
+        return self.get_checkpoints[-1].get('location')

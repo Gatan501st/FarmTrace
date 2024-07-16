@@ -15,6 +15,7 @@ from sqlalchemy.exc import IntegrityError
 
 @products.route('/', methods=['POST'])
 def add_product():
+    print(request.form.to_dict())
     product = Product(
         name=request.form.get('name'),
         description=request.form.get('description'),

@@ -60,7 +60,8 @@
 		<div id="my-listings" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 			{% for product in my_listings %}
 			<div class="bg-gray-200 rounded-lg overflow-hidden shadow-md">
-				<img class="bg-contain w-full bg-center p-2" src="../{{ product.avatar_path }}" alt="{{ product.name }}"
+				<p class="p-2 text-gray-900 font-bold m-2">Posted On: {{ product.created_at.strftime('%d %B %Y %H:%M') }}</p>
+				<img class="bg-contain w-full bg-center p-2" src="../../{{ product.avatar_path }}" alt="{{ product.name }}"
 					class="w-full h-48 object-cover">
 				<div class="p-4">
 					<h3 class="text-xl font-semibold mb-2">{{ product.product_name }}</h3>
@@ -68,6 +69,7 @@
 					<p class="text-gray-500 font-bold mb-2">Shipping to be negotiated</p>
 					<p class="text-gray-900 font-bold mb-2">Price: ${{ product.price }}</p>
 					<p class="text-gray-900 font-bold mb-2">Min Order: {{ product.min_order }} kgs</p>
+					<p class="text-gray-900 font-bold mb-2">Order Requests: {{ product.orders | length }}</p>
 				</div>
 			</div>
 			{% endfor %}
@@ -80,7 +82,8 @@
 			{% for product in products %}
 			<div class="bg-gray-200 rounded-lg h-[300px] overflow-hidden shadow-md">
 				<h3 class="p-2 text-xl font-semibold font-italic">{{product.product.manufacturer.company_name}}</h3>
-				<img src="../{{ product.avatar_path }}" alt="{{ product.product_name }}"
+				<p class="p-2 text-gray-900 font-bold mb-2">Posted On: {{ product.created_at.strftime('%d %B %Y %H:%M') }}</p>
+				<img src="../../{{ product.avatar_path }}" alt="{{ product.product_name }}"
 					class="w-full object-cover p-2">
 				<div class="p-4">
 					<h3 class="text-xl font-semibold mb-2">{{ product.product_name }}</h3>

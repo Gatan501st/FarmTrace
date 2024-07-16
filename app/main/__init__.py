@@ -4,8 +4,6 @@ from flask import current_app
 
 main = Blueprint("main", __name__)
 from . import views, errors
-from app.orders import views
-
 
 @main.app_context_processor
 def global_variables():

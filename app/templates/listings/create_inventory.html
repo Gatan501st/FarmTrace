@@ -7,7 +7,8 @@
 		</button>
 		<h2 class="text-2xl font-bold text-center">Create Inventory</h2>
 		<h3 class="text-sm m-2 text-center">An inventory allows you to manage and keep track of your stock</h3>
-		<form id="addBatchForm" method="post" action="">
+		<form id="createInventoryForm" method="post" action="{{url_for('listings.create_inventory')}}">
+			<input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
 			<div class="mb-4">
 				<label class="block text-gray-700 text-sm font-bold mb-2" for="name">Name</label>
 				<input
@@ -36,29 +37,9 @@
 	document.getElementById('closeInventoryModal').addEventListener('click', function () {
 		document.getElementById('createInventory').classList.add('hidden');
 	});
-	const form = document.querySelector('form')
+	const form = document.querySelector('#createInventoryForm')
 	form.addEventListener('submit', async (event) => {
-		event.preventDefault()
-		// Retrieve form data
-		const formData = new FormData(form)
-
-		try {
-			const response = await fetch('/listings/inventory', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: formData
-			})
-			if (!response.ok) {
-				const errorData = await response.json()
-				throw new Error(errorData.message)
-			}
-			// Hide modal
-			document.getElementById('createInventory').classList.add('hidden');
-		} catch (error) {
-			alert(error.message)
-		}
-		// Clear form inputs
-		document.getElementById('name').value = '';
-		document.getElementById('description').value = '';
+		form.reset()
+		
 	});
 </script>

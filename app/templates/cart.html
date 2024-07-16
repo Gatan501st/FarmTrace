@@ -27,6 +27,7 @@
                                 <td class="py-4">{{ item.product.name }}</td>
                                 <td class="py-4">
                                     <form action="{{ url_for('main.update_cart', product_id=item.product.id) }}" method="post" class="inline">
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                                         <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="w-16 border rounded px-2 py-1">
                                         <button type="submit" class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-700">Update</button>
                                     </form>
@@ -35,6 +36,7 @@
                                 <td class="py-4">${{ item.product.price * item.quantity }}</td>
                                 <td class="py-4">
                                     <form action="{{ url_for('main.remove_from_cart', product_id=item.product.id) }}" method="post" class="inline">
+                                        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                                         <button type="submit" class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-700">Remove</button>
                                     </form>
                                 </td>

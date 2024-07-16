@@ -1,4 +1,4 @@
-from flask import redirect, request, render_template, flash, url_for, current_app, abort
+from flask import redirect, request, render_template, flash, url_for, current_app, abort, make_response
 from flask_login import current_user
 from flask_login import login_required, login_user, logout_user
 from app.decorators import email_verified
@@ -11,13 +11,20 @@ from app.email import send_confirmation_email, confirm_token
 
 @accounts.route("/signin", methods=["GET", "POST"])
 def sign_in():
+    print('here is your form')
     if current_user.is_authenticated:
+        print('is authenticated')
         return redirect(url_for('main.index'))
+    print('You are not authenticated')
+    print(request.form.to_dict())
     if request.method == 'POST':
+        print(f'Got your form: {request.form.to_dict()}')
         email = request.form.get('email')
         password = request.form.get('password')
         user = User.get('email', email)
+        print(user)
         if user and user.verify_password(password):
+            print('Valid credentials')
             login_user(user)
             next = request.args.get('next')
             if next is None or not next.startswith('/'):
@@ -103,6 +110,20 @@ def verify_token(token):
 def profile():
     return render_template('accounts/profile.html', user=current_user)
 
+@accounts.route('profile/edit', methods=['PUT'])
+def edit_profile():
+    if not request.get_json() or not type(request.get_json()) == dict:
+        return make_response({'message': 'Invalid form data'})
+    data = request.get_json()
+    print(data)
+    for key, value in data.items():
+        if key == 'email':
+            current_user.confirmed = None
+            current_user.confirmed_on = None
+        setattr(current_user, key, value)
+    current_user.save()
+    print(current_user)
+    return make_response({'message': 'Updates saved'})
 
 @accounts.route("/dashboard")
 @login_required

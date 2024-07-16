@@ -35,7 +35,7 @@ class Config:
     MAIL_TIMEOUT = None
 
     # Mail Credentials Settings
-    MAIL_DEFAULT_SENDER = "Jisort Ublow Team <info@farmtrace.co.ke>"
+    MAIL_DEFAULT_SENDER = "Farm Trace <info@farmtrace.co.ke>"
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME", "a657725d47162c")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD", "9f6d390da75284")
 
@@ -46,7 +46,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     HOST = '127.0.0.1'
-    PORT = 5000
+    PORT = 5001
     DEBUG = True
     JWT_COOKIE_SECURE = True
     JWT_CSRF_CHECK_FORM = False

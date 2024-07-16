@@ -4,20 +4,21 @@
         <button id="closeModalButton"
             class="absolute top-2 right-5 font-bold text-3xl text-gray-500 hover:text-gray-700">
             &times;
-        </button>>
+        </button>
         <h2 class="text-2xl font-bold mb-4">Add Product</h2>
-        <form method="post" action="{{ url_for('products.add_product') }}">
+        <form id="addProductForm" method="post" action="{{ url_for('products.add_product') }}">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="productName">Product Name</label>
                 <input
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="productName" name="name" type="text" placeholder="Product Name">
+                    id="name" name="name" type="text" placeholder="Product Name" value="">
             </div>
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="productDescription">Description</label>
                 <textarea
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="productDescription" name="description" placeholder="Product Description"></textarea>
+                    id="description" name="description" placeholder="Product Description"></textarea>
             </div>
             <div class="flex items-center justify-between">
                 <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit">Add
@@ -35,10 +36,7 @@
     document.getElementById('closeModalButton').addEventListener('click', function () {
         document.getElementById('addProductModal').classList.add('hidden');
     });
-
-    document.querySelector('form').addEventListener('submit', function (event) {
-        var batchSizesInput = document.getElementById('batchSizesInput');
-        var batchSizes = batchSizesInput.value.split(',').map(Number);
-        batchSizesInput.value = JSON.stringify(batchSizes);
-    });
+    document.querySelector('#addProductForm').addEventListener('submit', (event) => {
+        event.target.reset()
+    })
 </script>

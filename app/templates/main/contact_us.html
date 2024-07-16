@@ -10,6 +10,7 @@
     <div class="p-4 sm:p-6">
       <h2 class="text-2xl sm:text-3xl font-bold text-green-600 mb-4">Contact Us</h2>
       <form action="#">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
         <div class="mb-4">
           <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
           <input type="text" id="name" name="name" placeholder="Your Name"

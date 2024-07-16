@@ -17,7 +17,8 @@
 			<ul class="flex flex-wrap divide-y divide-gray-200">
 				{% if current_user.orders_received %}
 				{% for order in current_user.orders_received %}
-				{% if order not in shipment.orders %}
+				{% if order not in shipment.orders and not order.shipment %}
+				{{order.status}}
 				<li class="p-4 m-2 flex bg-gray-200 rounded-md">
 					<div class="flex-1">
 						<div class="flex items-center justify-between">
@@ -57,8 +58,10 @@
 			<form action="{{url_for('shipments.dispatch_shipment', shipment_id=shipment.id)}}" method="get">
 				<div class="flex items-center justify-between mt-2">
 					<button id="dispatchShipment"
-						disabled="{% if shipment.status == 'Processing' %}false{% else %}true{% endif %}" class="{% if shipment.status == 'Processing' %}bg-green-600 hover:bg-green-700{% else %} bg-gray-400 {% endif %}
-						text-white font-bold py-2 px-4 rounded" type="submit">Dispatch Shipment</button>
+						class="{% if shipment.status == 'Processing' %}bg-green-600 hover:bg-green-700{% else %} bg-gray-400 {% endif %}
+						text-white font-bold py-2 px-4 rounded" type="submit"
+						{% if shipment.status != 'Processing' %}disabled{% endif %}>
+						{% if shipment.status != 'Processing' and shipment.orders %}{{shipment.status}}{% else %}Dispatch Shipment{% endif %}</button>
 				</div>
 			</form>
 			<ul class="flex flex-wrap divide-y divide-gray-200">

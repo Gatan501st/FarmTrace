@@ -1,3 +1,4 @@
+from flask import session, request
 from flask import Flask
 from flask_mail import Mail
 from flask_admin import Admin
@@ -20,10 +21,12 @@ def load_user(user_id):
 
     return User.query.get(user_id)
 
+
 db = SQLAlchemy()
 mail = Mail()
 moment = Moment()
 migrate = Migrate()
+
 
 def create_app(config_name="default"):
     """
@@ -43,10 +46,10 @@ def create_app(config_name="default"):
     mail.init_app(app)
     moment.init_app(app)
     migrate.init_app(app, db)
-    
+
     from app.models import User, Role
     from app.admin import setup_admin
-    
+
     setup_admin(app)
 
     # Register blueprints for different parts of the application
@@ -61,9 +64,9 @@ def create_app(config_name="default"):
     from .listings import listings as listings_blueprint
 
     app.register_blueprint(listings_blueprint, url_prefix="/listings")
-    
+
     from .products import products as products_blueprint
-    
+
     app.register_blueprint(products_blueprint, url_prefix="/products")
 
     from .orders import orders as orders_blueprint
