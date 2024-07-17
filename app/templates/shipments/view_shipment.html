@@ -56,11 +56,11 @@
 			<h3 class="text-2xl font-semibold mb-2">Ready To Ship:</h3>
 			<form id="dispatch_shipping">
 				<div class="flex items-center justify-between mt-2">
-					<button id="dispatchShipment"
-						class="{% if shipment.status == 'Processing' and shipment.orders %}bg-green-600 hover:bg-green-700{% else %} bg-gray-400 {% endif %}
-						text-white font-bold py-2 px-4 rounded disabled:bg-red-400" type="submit"
-						{% if shipment.status != 'Processing' and not shipment.orders %}disabled{% endif %}>
-						{% if shipment.status != 'Processing' and shipment.orders %}{{shipment.status}}{% else %}Dispatch Shipment{% endif %}</button>
+					<button id="dispatchShipment" class="{% if shipment.status == 'Processing' and shipment.orders %}bg-green-600 hover:bg-green-700{% else %} bg-gray-400 {% endif %}
+						text-white font-bold py-2 px-4 rounded disabled:bg-red-400" type="submit" {% if shipment.status !='Processing'
+						and not shipment.orders %}disabled{% endif %}>
+						{% if shipment.status != 'Processing' and shipment.orders %}{{shipment.status}}{% else
+						%}Dispatch Shipment{% endif %}</button>
 				</div>
 			</form>
 			<ul class="flex flex-wrap divide-y divide-gray-200">
@@ -91,6 +91,48 @@
 				<p>You've not added any orders to this shipping</p>
 				{% endif %}
 			</ul>
+			<div class="relative pt-1">
+				<div class="flex mb-2 items-center justify-between">
+					<div>
+						<span
+							class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-200">
+							Tracking Progress
+						</span>
+					</div>
+				</div>
+				<div class="w-full bg-gray-200 rounded-full h-4 mb-4">
+					<div class="bg-blue-500 h-4 rounded-full" style="width: {{ tracking_progress }}%"></div>
+				</div>
+				<div class="relative">
+					<div class=" w-full flex justify-between items-center">
+						{% for checkpoint in shipment.get_checkpoints %}
+						<div class="flex-1 text-center relative">
+							<div
+								class="w-8 h-8 bg-{{ 'blue-500' if checkpoint.date else 'gray-400' }} rounded-full mx-auto mb-1 flex items-center justify-center relative z-10">
+								{% if checkpoint.date %}
+								<span class="text-white">&#10003;</span>
+								{% endif %}
+							</div>
+							<div class="text-xs text-gray-700">{{ checkpoint.locatiion }}</div>
+							<div class="text-xs text-gray-500">{{ checkpoint.status }}</div>
+							{% if not loop.last %}
+							<div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-300 z-0"
+								style="transform: translateY(-50%);"></div>
+							{% endif %}
+						</div>
+						{% endfor %}
+						<div class="flex-1 text-center relative">
+							<div
+								class="w-8 h-8 bg-{{ 'blue-500' if shipment.get_checkpoints[-1].location == shipment.destination else 'gray-400' }} rounded-full mx-auto mb-1 flex items-center justify-center relative z-10">
+								<span class="text-white">&#10003;</span>
+							</div>
+							<div class="text-xs text-gray-700">{{ shipment.destination }}</div>
+							<div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-300 z-0"
+								style="transform: translateY(-50%);"></div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 		{% include 'shipments/add_shipment_order.html' %}
 	</div>

@@ -118,7 +118,7 @@ def edit_profile():
     print(data)
     for key, value in data.items():
         if key == 'email':
-            current_user.confirmed = None
+            current_user.confirmed = False
             current_user.confirmed_on = None
         setattr(current_user, key, value)
     current_user.save()

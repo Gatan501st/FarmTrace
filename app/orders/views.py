@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, request, make_response
+from flask import render_template, redirect, url_for, request, current_app
 from flask_login import current_user, login_required
 from . import orders
 from app.models import Listing, Order, Product
@@ -49,7 +49,11 @@ def place_order(listing_id):
             recipient_id=current_user.id,
             sender_id=listing.inventory.user_id
         )
+        from app.utils import generate_qr
+        qr_filename = f'{order.id}.jpg'
+        order.qrcode = generate_qr(f'{current_app.config['ORGANIZATION_DOMAIN']}{url_for('orders.view_order', order_id=order.id)}', qr_filename)
         order.save()
+        return redirect(url_for('orders.view_order', order_id=order.id))
     return render_template('orders/place_order.html', listing=listing)
 
 

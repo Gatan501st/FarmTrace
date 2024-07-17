@@ -1,5 +1,6 @@
 from flask import Blueprint
 from flask import current_app
+from app.utils import generate_qr
 
 
 main = Blueprint("main", __name__)
@@ -17,4 +18,5 @@ def global_variables():
     """
     return dict(
         app_name=current_app.config["ORGANIZATION_NAME"],
+        generate_qr=generate_qr,
     )

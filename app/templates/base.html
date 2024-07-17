@@ -84,9 +84,6 @@
 </head>
 
 <body class="bg-gray-100 text-gray-900 relative">
-  {% if current_user %}
-  {{current_user.role_title}}
-  {%endif%}
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
   <ul id="flashed" class="flex flex-col w-[100%] fixed top-5 items-center bg-transparent">

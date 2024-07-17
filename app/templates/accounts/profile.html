@@ -11,14 +11,15 @@
 
 			<!-- Profile Picture -->
 			<div class="flex items-center mb-6">
-				<img class="w-24 h-24 rounded-full mr-4" src="https://via.placeholder.com/150" alt="Profile Picture">
+				<img id="profilePicturePreview" class="w-24 h-24 rounded-full mr-4"
+					src="https://via.placeholder.com/150" alt="Profile Picture">
 				<div>
 					<label class="block text-gray-700 text-sm font-bold mb-2" for="profile_picture">
 						Profile Picture
 					</label>
 					<input
 						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-						id="profile_picture" type="file">
+						id="profilePictureInput" type="file">
 				</div>
 			</div>
 
@@ -26,72 +27,66 @@
 			<form id="profileForm" action="{{ url_for('accounts.edit_profile') }}" method="POST">
 				<input type="hidden" name="_method" value="PUT">
 				<input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-				<div class="mb-4">
-					<label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-						Username
-					</label>
-					<input
-						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-						id="username" name="username" type="text" value="{{ current_user.username }}" disabled>
-				</div>
+				<div class="flex justify-between gap-4">
+					<div class="mb-4">
+						<label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+							Email
+						</label>
+						<input
+							class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+							id="email" name="email" type="email" value="{{ current_user.email }}" disabled>
+					</div>
 
-				<div class="mb-4">
-					<label class="block text-gray-700 text-sm font-bold mb-2" for="email">
-						Email
-					</label>
-					<input
-						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-						id="email" name="email" type="email" value="{{ current_user.email }}" disabled>
+					<div class="mb-4">
+						<label class="block text-gray-700 text-sm font-bold mb-2" for="role">
+							Role
+						</label>
+						<input
+							class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+							id="role" name="role" type="text" value="{{ current_user.role_title }}" disabled>
+					</div>
 				</div>
-
-				<div class="mb-4">
-					<label class="block text-gray-700 text-sm font-bold mb-2" for="role">
-						Role
-					</label>
-					<input
-						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-						id="role" name="role" type="text" value="{{ current_user.role_title }}" disabled>
-				</div>
-
 				<!-- Address Information -->
 				<h3 class="text-xl font-semibold mb-4 mt-6">Address Information</h3>
+				<div class="flex justify-between gap-2">
+					<div class="mb-4">
+						<label class="block text-gray-700 text-sm font-bold mb-2" for="address">
+							Address
+						</label>
+						<input placeholder="123 Main St"
+							class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+							id="address" name="address" type="text" {% if current_user.address %}
+							value="{{ current_user.address }}" {% endif %}>
+					</div>
 
-				<div class="mb-4">
-					<label class="block text-gray-700 text-sm font-bold mb-2" for="address">
-						Address
-					</label>
-					<input
-						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-						id="address" name="address" type="text" value="{{ current_user.address }}">
+					<div class="mb-4">
+						<label class="block text-gray-700 text-sm font-bold mb-2" for="city">
+							City
+						</label>
+						<input placeholder="Nairobi"
+							class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+							id="city" name="city" type="text" {% if current_user.city %}value="{{ current_user.city }}"{% endif %}>
+					</div>
 				</div>
+				<div class="flex justify-between gap-4">
+					<div class="mb-4">
+						<label class="block text-gray-700 text-sm font-bold mb-2" for="state">
+							State
+						</label>
+						<input placeholder="Nairobi Area"
+							class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+							id="state" name="state" type="text" {% if current_user.state %}value="{{ current_user.state }}"{% endif %}>
+					</div>
 
-				<div class="mb-4">
-					<label class="block text-gray-700 text-sm font-bold mb-2" for="city">
-						City
-					</label>
-					<input
-						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-						id="city" name="city" type="text" value="{{ current_user.city }}">
+					<div class="mb-4">
+						<label class="block text-gray-700 text-sm font-bold mb-2" for="zipcode">
+							Zip Code
+						</label>
+						<input placeholder="12345"
+							class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+							id="zipcode" name="zipcode" type="text" {% if current_user.zipcode %} value="{{ current_user.zipcode }}"{% endif %}>
+					</div>
 				</div>
-
-				<div class="mb-4">
-					<label class="block text-gray-700 text-sm font-bold mb-2" for="state">
-						State
-					</label>
-					<input
-						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-						id="state" name="state" type="text" value="{{ current_user.state }}">
-				</div>
-
-				<div class="mb-4">
-					<label class="block text-gray-700 text-sm font-bold mb-2" for="zipcode">
-						Zip Code
-					</label>
-					<input
-						class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-						id="zipcode" name="zipcode" type="text" value="{{ current_user.zipcode }}">
-				</div>
-
 				<!-- Notification Preferences -->
 				<h3 class="text-xl font-semibold mb-4 mt-6">Notification Preferences</h3>
 
@@ -99,7 +94,8 @@
 					<label class="block text-gray-700 text-sm font-bold mb-2" for="email_notifications">
 						Email Notifications
 					</label>
-					<input type="checkbox" id="email_notifications" name="email_notifications" {{ 'checked' if current_user.email_notifications else '' }}>
+					<input type="checkbox" id="email_notifications" name="email_notifications" {{ 'checked' if
+						current_user.email_notifications else '' }}>
 					<label for="email_notifications" class="text-gray-700 text-sm">Receive email notifications</label>
 				</div>
 
@@ -107,7 +103,8 @@
 					<label class="block text-gray-700 text-sm font-bold mb-2" for="sms_notifications">
 						SMS Notifications
 					</label>
-					<input type="checkbox" id="sms_notifications" name="sms_notifications" {{ 'checked' if current_user.sms_notifications else '' }}>
+					<input type="checkbox" id="sms_notifications" name="sms_notifications" {{ 'checked' if
+						current_user.sms_notifications else '' }}>
 					<label for="sms_notifications" class="text-gray-700 text-sm">Receive SMS notifications</label>
 				</div>
 
@@ -127,7 +124,8 @@
 					<label class="block text-gray-700 text-sm font-bold mb-2" for="two_factor">
 						Two-Factor Authentication
 					</label>
-					<input type="checkbox" id="two_factor" name="two_factor" {{ 'checked' if current_user.two_factor else '' }}>
+					<input type="checkbox" id="two_factor" name="two_factor" {{ 'checked' if current_user.two_factor
+						else '' }}>
 					<label for="two_factor" class="text-gray-700 text-sm">Enable two-factor authentication</label>
 				</div>
 
@@ -140,40 +138,58 @@
 </div>
 
 <script>
-document.getElementById('profileForm').addEventListener('submit', function(event) {
-	event.preventDefault();
-	
-	let form = event.target;
-	let formData = new FormData(form);
-	let changedData = {};
-	
-	formData.forEach((value, key) => {
-		let input = document.getElementById(key);
-		if (input && input.value !== input.defaultValue) {
-			changedData[key] = value;
+	document.getElementById('profilePictureInput').addEventListener('change', function (event) {
+		const file = event.target.files[0];
+		if (file) {
+			// Store the profile picture file (this would typically be done in a form submission)
+			const profilePicture = file;
+
+			// Create a FileReader to read the file and generate a preview
+			const reader = new FileReader();
+			reader.onloadend = function () {
+				// Set the profile picture preview
+				const profilePicturePreview = reader.result;
+				const imgElement = document.getElementById('profilePicturePreview');
+				imgElement.src = profilePicturePreview;
+				imgElement.style.display = 'block';
+			};
+			reader.readAsDataURL(file);
 		}
 	});
-	
-	if (Object.keys(changedData).length > 0) {
-		fetch(form.action, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(changedData)
-		}).then(response => {
-			if (response.ok) {
-				alert('Profile updated successfully');
-			} else {
-				alert('Failed to update profile');
+	document.getElementById('profileForm').addEventListener('submit', function (event) {
+		event.preventDefault();
+
+		let form = event.target;
+		let formData = new FormData(form);
+		let changedData = {};
+
+		formData.forEach((value, key) => {
+			let input = document.getElementById(key);
+			if (input && input.value !== input.defaultValue) {
+				changedData[key] = value;
 			}
-		}).catch(error => {
-			alert('Error updating profile');
 		});
-	} else {
-		alert('No changes detected');
-	}
-});
+
+		if (Object.keys(changedData).length > 0) {
+			fetch(form.action, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(changedData)
+			}).then(response => {
+				if (response.ok) {
+					alert('Profile updated successfully');
+				} else {
+					alert('Failed to update profile');
+				}
+			}).catch(error => {
+				alert('Error updating profile');
+			});
+		} else {
+			alert('No changes detected');
+		}
+	});
 </script>
 
 {% endblock content %}
