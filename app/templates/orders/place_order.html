@@ -54,6 +54,12 @@
 						id="delivery_address" name="delivery_address" type="text" placeholder="Enter Delivery Address"
 						required {% if current_user.address %} value="{{current_user.address}}" {%endif%}>
 				</div>
+				{% if not current_user.address %}
+				<div>
+					<input type="checkbox" name="add_address" id="add_address">
+					<label for="add_address">Add this address to your profile?</label>
+				</div>
+				{% endif %}
 				<div class="flex items-center justify-between m-4">
 					<button
 						class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline"

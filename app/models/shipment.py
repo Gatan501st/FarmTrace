@@ -34,7 +34,7 @@ class Shipment(BaseModel, db.Model):
 
     @property
     def status(self):
-        return self.get_checkpoints[-1].get('statuus')
+        return self.get_checkpoints[-1].get('status')
     @property
     def current_location(self):
         return self.get_checkpoints[-1].get('location')

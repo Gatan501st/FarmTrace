@@ -8,12 +8,20 @@
         <h2 class="text-2xl font-bold mb-4">Create Shipment</h2>
         <form id="createShipmentForm" method="post" action="{{ url_for('shipments.create_shipment') }}">
             <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="current_location">Current Location</label>
+            <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="current_location">Current
+                    Location</label>
                 <textarea
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="current_location" name="current_location" placeholder="Current Shipment Location" required>{{current_user.address}}</textarea>
+                    id="current_location" name="current_location" placeholder="Current Shipment Location"
+                    required>{% if current_user.address %}{{current_user.address}}{% endif %}</textarea>
             </div>
+            {% if not current_user.address %}
+            <div class="mb-4">
+                <input type="checkbox" name="add_address" id="add_address">
+                <label for="add_address">Set this as your main address</label>
+            </div>
+            {% endif %}
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2" for="destination">Destination</label>
                 <textarea
@@ -21,12 +29,15 @@
                     id="destination" name="destination" placeholder="Shipment Destination"></textarea>
             </div>
             <div class="flex items-center justify-between">
-                <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" type="submit">Create</button>
+                <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    type="submit">Create</button>
             </div>
         </form>
     </div>
 </div>
-
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfGf7UHR5wJZXXqmwgb6Aggk7tBFw15-8&libraries=places"></script>
+</script>
 <script>
     document.getElementById('createShipmentButton').addEventListener('click', function () {
         document.getElementById('createShipmentModal').classList.remove('hidden');
@@ -36,7 +47,25 @@
         document.getElementById('createShipmentModal').classList.add('hidden');
     });
 
-    document.querySelector('#createShipmentForm').addEventListener('submit', function (event) {
-		event.target.reset()
-    });
+
+    function initAutocomplete() {
+        const locationInput = document.getElementById('current_location');
+        const autocomplete = new google.maps.places.Autocomplete(locationInput);
+
+        autocomplete.addListener('place_changed', () => {
+            const place = autocomplete.getPlace();
+
+            // Set the latitude and longitude input fields
+            if (place.geometry) {
+                document.getElementById('latitude').value = place.geometry.location.lat();
+                document.getElementById('longitude').value = place.geometry.location.lng();
+            } else {
+                alert("No details available for input: '" + place.name + "'");
+            }
+        });
+    }
+
+    // Initialize the Google Places Autocomplete when the window loads
+    window.onload = initAutocomplete;
+</script>
 </script>

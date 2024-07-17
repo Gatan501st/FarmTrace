@@ -11,6 +11,9 @@ from . import shipments
 
 @shipments.route('/create', methods=['POST'])
 def create_shipment():
+    if request.form.get('add_address') and request.form.get('current_location'):
+        current_user.address = request.form.get('current_location')
+        current_user.save()
     shipment = Shipment(
         destination=request.form.get('destination'),
         checkpoints=json.dumps(
@@ -58,16 +61,14 @@ def add_shipment_order(shipment_id, order_id):
     return redirect(url_for('shipments.view_shipment', shipment_id=shipment.id))
 
 
-@shipments.route('<shipment_id>/dispatch')
+@shipments.route('<shipment_id>/dispatch', methods=['PUT'])
 def dispatch_shipment(shipment_id):
     shipment = Shipment.get('id', shipment_id)
     if shipment is None:
-        flash('Shipment not found')
-        return redirect(url_for('accounts.dashboard'))
+        return make_response({"message": 'Shipment not found'}, 404)
     shipment.update_checkpoint(
-        location=request.form.get('location'),
+        location="In Transit",
         status='Dispatched'
 	)
     shipment.save()
-    flash('Shipment dispatched for shipping')
-    return redirect(url_for('accounts.dashboard'))
+    return make_response({"message": 'Shipment dispatched successfully'}, 200)

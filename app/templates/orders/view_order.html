@@ -4,90 +4,90 @@
 
 {% block content %}
 <div class="container mx-auto mt-10 px-4">
-	<div class="flex justify-center">
-		<div class="w-full max-w-4xl">
-			<h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Order Details</h2>
-			<div class="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
-				<h3 class="text-2xl font-bold mb-4">Order #{{ order.id }}</h3>
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-					<div>
-						<strong>Product:</strong>
-						<p class="text-gray-700">{{ order.product.name }}</p>
-					</div>
-					<div>
-						<img style="height: 64px; width: 64px;" src="../../static/qrcodes/{{order.id}}.jpg " alt="">
-					</div>
-					<div>
-						<strong>Quantity:</strong>
-						<p class="text-gray-700">{{ order.quantity }}</p>
-					</div>
-					<div>
-						<strong>Total Price:</strong>
-						<p class="text-gray-700">KSH {{ order.total_price }}</p>
-					</div>
-					<div>
-						<strong>Order Date:</strong>
-						<p class="text-gray-700">{{ order.order_date.strftime('%d %B %Y %H:%M') }}</p>
-					</div>
-					<div>
-						<strong>Payment Method:</strong>
-						<p class="text-gray-700">{{ order.payment_method | title }}</p>
-					</div>
-					<div>
-						<strong>Delivery Address:</strong>
-						<p class="text-gray-700">{{ order.delivery_address }}</p>
-					</div>
-					
-				</div>
+    <div class="flex justify-center">
+        <div class="w-full max-w-4xl">
+            <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Order Details</h2>
+            <div class="bg-white shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4">
+                <h3 class="text-2xl font-bold mb-4">Order #{{ order.id }}</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <strong>Product:</strong>
+                        <p class="text-gray-700">{{ order.product.name }}</p>
+                    </div>
+                    <div>
+                        <img style="height: 64px; width: 64px;" src="../../static/qrcodes/{{order.id}}.jpg " alt="">
+                    </div>
+                    <div>
+                        <strong>Quantity:</strong>
+                        <p class="text-gray-700">{{ order.quantity }}</p>
+                    </div>
+                    <div>
+                        <strong>Total Price:</strong>
+                        <p class="text-gray-700">KSH {{ order.total_price }}</p>
+                    </div>
+                    <div>
+                        <strong>Order Date:</strong>
+                        <p class="text-gray-700">{{ order.order_date.strftime('%d %B %Y %H:%M') }}</p>
+                    </div>
+                    <div>
+                        <strong>Payment Method:</strong>
+                        <p class="text-gray-700">{{ order.payment_method | title }}</p>
+                    </div>
+                    <div>
+                        <strong>Delivery Address:</strong>
+                        <p class="text-gray-700">{{ order.delivery_address }}</p>
+                    </div>
+                </div>
 
-				{% if order.shipment %}
-				<!-- Order Tracking -->
-				<h3 class="text-2xl font-bold mt-6 mb-4">Order Tracking</h3>
-				<div class="relative pt-1">
-					<div class="flex mb-2 items-center justify-between">
-						<div>
-							<span
-								class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-200">
-								Tracking Progress
-							</span>
-						</div>
-					</div>
-					<div class="w-full bg-gray-200 rounded-full h-4 mb-4">
-						<div class="bg-blue-500 h-4 rounded-full" style="width: {{ tracking_progress }}%"></div>
-					</div>
-					<div class="relative">
-						<div class="absolute w-full flex justify-between">
-							{% for checkpoint in order.shipment.get_checkpoints %}
-							<div class="text-center w-1/4">
-								<div
-									class="w-8 h-8 bg-{{ 'blue-500' if checkpoint.date else 'gray-400' }} rounded-full mx-auto mb-1 flex items-center justify-center">
-									{% if checkpoint.date %}
-									<span class="text-white">&#10003;</span>
-									{% endif %}
-								</div>
-								<div class="text-xs text-gray-700">{{ checkpoint.locatiion }}</div>
-								<div class="text-xs text-gray-500">{{ checkpoint.status }}</div>
-							</div>
-							{% endfor %}
-						</div>
-					</div>
-				</div>
+                {% if order.shipment %}
+                <!-- Order Tracking -->
+                <h3 class="text-2xl font-bold mt-6 mb-4">Order Tracking</h3>
+                <div class="relative pt-1">
+                    <div class="flex mb-2 items-center justify-between">
+                        <div>
+                            <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-600 bg-blue-200">
+                                Tracking Progress
+                            </span>
+                        </div>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
+                        <div class="bg-blue-500 h-4 rounded-full" style="width: {{ tracking_progress }}%"></div>
+                    </div>
+                    <div class="relative">
+                        <div class="absolute w-full flex justify-between items-center">
+                            {% for checkpoint in order.shipment.get_checkpoints %}
+                            <div class="flex-1 text-center relative">
+                                <div class="w-8 h-8 bg-{{ 'blue-500' if checkpoint.date else 'gray-400' }} rounded-full mx-auto mb-1 flex items-center justify-center relative z-10">
+                                    {% if checkpoint.date %}
+                                    <span class="text-white">&#10003;</span>
+                                    {% endif %}
+                                </div>
+                                <div class="text-xs text-gray-700">{{ checkpoint.locatiion }}</div>
+                                <div class="text-xs text-gray-500">{{ checkpoint.status }}</div>
+                                {% if not loop.last %}
+                                <div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-300 z-0" style="transform: translateY(-50%);"></div>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
 
-				<div class="mt-12">
-					<h3 class="text-2xl font-bold mb-4">Current Location</h3>
-					<div class="p-4 border border-gray-300 rounded-lg bg-gray-100">
-						<p class="text-gray-700">{{ order.shipment.get_checkpoints[-1].locatiion }}</p>
-					</div>
-				</div>
-				{% else %}
-				<div class="text-center p-6">
-					<h3 class="text-2xl font-bold text-green-600">Your order has not been processed yet.</h3>
-					<h3 class="font-italic font-semibold">You will be able to view all tracking information once the
-						order is claimed</h3>
-				</div>
-				{% endif %}
-			</div>
-		</div>
-	</div>
+                <div class="mt-12">
+                    <h3 class="text-2xl font-bold mb-4">Current Location</h3>
+                    <div class="p-4 border border-gray-300 rounded-lg bg-gray-100">
+                        <p class="text-gray-700">{{ order.shipment.get_checkpoints[-1].locatiion }}</p>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center p-6">
+                    <h3 class="text-2xl font-bold text-green-600">Your order has not been processed yet.</h3>
+                    <h3 class="font-italic font-semibold">You will be able to view all tracking information once the
+                        order is claimed</h3>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock content %}

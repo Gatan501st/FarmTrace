@@ -29,6 +29,9 @@ def view_order(order_id):
 def place_order(listing_id):
     listing = Listing.get('id', listing_id)
     product = Product.get('id', listing.product_id)
+    if request.form.get('add_address'):
+        current_user.address = request.form.get('delivery_address')
+        current_user.save()
     if request.method == 'POST':
         order = Order(
             quantity=request.form.get('quantity'),
